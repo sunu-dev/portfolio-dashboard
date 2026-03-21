@@ -8,11 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --bg: #0f1117;
@@ -20,6 +16,7 @@
             --accent: #6c5ce7;
             --green: #00d2a0;
             --red: #ff6b6b;
+            --yellow: #ffa726;
             --text-primary: #e0e0e0;
             --text-secondary: #a0a0a0;
             --border: #2a2d3d;
@@ -45,765 +42,152 @@
             top: 0;
             z-index: 100;
         }
-
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .pulse {
-            width: 8px;
-            height: 8px;
-            background-color: var(--green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .last-update {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .btn-icon {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.3s;
-        }
-
-        .btn-icon:hover {
-            color: var(--accent);
-        }
+        .header h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+        .status-indicator { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+        .pulse { width: 8px; height: 8px; background-color: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .last-update { font-size: 0.85rem; color: var(--text-secondary); }
+        .btn-icon { background: none; border: none; color: var(--text-primary); cursor: pointer; font-size: 1.2rem; padding: 0.5rem; display: flex; align-items: center; justify-content: center; transition: color 0.3s; }
+        .btn-icon:hover { color: var(--accent); }
 
         /* Main container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
         /* Macro indicators */
-        .macro-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .macro-card {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .macro-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .macro-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .macro-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .change-up {
-            color: var(--green);
-        }
-
-        .change-down {
-            color: var(--red);
-        }
+        .macro-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem; }
+        .macro-card { background-color: var(--card); border: 1px solid var(--border); padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.5rem; min-width: 150px; }
+        .macro-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        .macro-value { font-size: 1.3rem; font-weight: 700; }
+        .macro-change { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+        .change-up { color: var(--green); }
+        .change-down { color: var(--red); }
 
         /* Search bar */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-top: none;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .search-result-item:hover {
-            background-color: #252839;
-        }
-
-        .result-symbol {
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .result-name {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
+        .search-section { margin-bottom: 2rem; }
+        .search-container { position: relative; }
+        .search-input { width: 100%; padding: 1rem 1.5rem; background-color: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 1rem; font-family: 'Noto Sans KR', sans-serif; }
+        .search-input::placeholder { color: var(--text-secondary); }
+        .search-results { position: absolute; top: 100%; left: 0; right: 0; background-color: var(--card); border: 1px solid var(--border); border-top: none; max-height: 300px; overflow-y: auto; z-index: 50; display: none; border-radius: 0 0 8px 8px; }
+        .search-results.active { display: block; }
+        .search-result-item { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background-color 0.2s; }
+        .search-result-item:hover { background-color: #252839; }
+        .result-symbol { font-weight: 600; color: var(--accent); }
+        .result-name { font-size: 0.85rem; color: var(--text-secondary); }
 
         /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            font-weight: 500;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .tab.active {
-            color: var(--accent);
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: var(--accent);
-        }
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        .tab { padding: 1rem 1.5rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1rem; font-family: 'Noto Sans KR', sans-serif; font-weight: 500; transition: all 0.3s; position: relative; }
+        .tab.active { color: var(--accent); }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--accent); }
 
         /* Stock grid */
-        .stock-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+        .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stock-card { background-color: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; transition: all 0.3s; position: relative; }
+        .stock-card:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(108, 92, 231, 0.1); }
+        .stock-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .stock-info { flex: 1; }
+        .stock-ticker { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+        .stock-name { font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .stock-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .badge { font-size: 0.7rem; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600; text-transform: uppercase; }
+        .badge-short { background-color: rgba(255, 107, 107, 0.2); color: var(--red); }
+        .badge-long { background-color: rgba(0, 210, 160, 0.2); color: var(--green); }
+        .badge-watch { background-color: rgba(108, 92, 231, 0.2); color: var(--accent); }
+        .btn-delete { background: none; border: none; color: var(--red); cursor: pointer; font-size: 1.2rem; opacity: 0.6; transition: opacity 0.2s; }
+        .btn-delete:hover { opacity: 1; }
+        .stock-price { font-size: 2rem; font-weight: 700; margin: 1rem 0; }
+        .stock-change { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; margin-bottom: 1rem; }
+        .change-amount { font-weight: 600; }
+        .change-percent { opacity: 0.8; }
 
-        .stock-card {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .stock-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
-        }
-
-        .stock-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .stock-info {
-            flex: 1;
-        }
-
-        .stock-ticker {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .stock-name {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .stock-badges {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-
-        .badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .badge-short {
-            background-color: rgba(255, 107, 107, 0.2);
-            color: var(--red);
-        }
-
-        .badge-long {
-            background-color: rgba(0, 210, 160, 0.2);
-            color: var(--green);
-        }
-
-        .badge-watch {
-            background-color: rgba(108, 92, 231, 0.2);
-            color: var(--accent);
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: var(--red);
-            cursor: pointer;
-            font-size: 1.2rem;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        .btn-delete:hover {
-            opacity: 1;
-        }
-
-        .stock-price {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 1rem 0;
-        }
-
-        .stock-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .change-amount {
-            font-weight: 600;
-        }
-
-        .change-percent {
-            opacity: 0.8;
-        }
+        /* Period performance grid */
+        .period-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 1rem 0; }
+        .period-item { text-align: center; padding: 6px 2px; background: rgba(0,0,0,0.25); border-radius: 6px; }
+        .period-label { font-size: 9px; color: var(--text-secondary); margin-bottom: 2px; display: block; }
+        .period-value { font-size: 12px; font-weight: 700; }
+        .period-value.up { color: var(--green); }
+        .period-value.down { color: var(--red); }
+        .period-value.loading { color: var(--text-secondary); }
 
         /* 52-week bar */
-        .week52-container {
-            margin: 1.5rem 0;
-        }
-
-        .week52-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .week52-bar {
-            height: 6px;
-            background-color: var(--border);
-            border-radius: 3px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .week52-position {
-            height: 100%;
-            width: 2px;
-            background-color: var(--accent);
-            position: absolute;
-            top: 0;
-        }
+        .week52-container { margin: 1rem 0; }
+        .week52-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .week52-bar { height: 6px; background-color: var(--border); border-radius: 3px; position: relative; overflow: hidden; }
+        .week52-position { height: 100%; width: 2px; background-color: var(--accent); position: absolute; top: 0; }
 
         /* Alert zones */
-        .alert-zones {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-        }
-
-        .zone-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-        }
-
-        .zone-label {
-            color: var(--text-secondary);
-        }
-
-        .zone-value {
-            font-weight: 600;
-        }
-
-        /* Buy zones */
-        .buy-zones {
-            margin-top: 1rem;
-        }
-
-        .buy-zone-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            font-size: 0.85rem;
-            padding-left: 0.5rem;
-            border-left: 2px solid var(--green);
-        }
+        .alert-zones { margin-top: 1rem; font-size: 0.85rem; }
+        .zone-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background-color: rgba(0, 0, 0, 0.2); border-radius: 6px; margin-bottom: 0.5rem; }
+        .zone-label { color: var(--text-secondary); }
+        .zone-value { font-weight: 600; }
+        .buy-zones { margin-top: 1rem; }
+        .buy-zone-item { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; padding-left: 0.5rem; border-left: 2px solid var(--green); }
 
         /* Alert banner */
-        .alert-banner {
-            position: fixed;
-            top: 70px;
-            left: 0;
-            right: 0;
-            padding: 1rem 1.5rem;
-            background-color: rgba(0, 210, 160, 0.1);
-            border-bottom: 2px solid var(--green);
-            display: none;
-            z-index: 200;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        .alert-banner.active {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-            }
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .alert-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .alert-icon {
-            font-size: 1.5rem;
-        }
-
-        .alert-text {
-            color: var(--green);
-            font-weight: 600;
-        }
-
-        .alert-close {
-            background: none;
-            border: none;
-            color: var(--green);
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
+        .alert-banner { position: fixed; top: 70px; left: 0; right: 0; padding: 1rem 1.5rem; background-color: rgba(0, 210, 160, 0.1); border-bottom: 2px solid var(--green); display: none; z-index: 200; animation: slideDown 0.3s ease-out; }
+        .alert-banner.active { display: flex; justify-content: space-between; align-items: center; }
+        @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+        .alert-content { display: flex; align-items: center; gap: 1rem; }
+        .alert-icon { font-size: 1.5rem; }
+        .alert-text { color: var(--green); font-weight: 600; }
+        .alert-close { background: none; border: none; color: var(--green); cursor: pointer; font-size: 1.2rem; }
 
         /* News section */
-        .news-section {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
+        .news-section { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+        .news-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .news-update-note { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .news-card { background-color: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; transition: all 0.3s; cursor: pointer; }
+        .news-card:hover { border-color: var(--accent); }
+        .news-date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .news-headline { font-weight: 600; margin-bottom: 0.75rem; line-height: 1.4; }
+        .news-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .news-source { font-size: 0.75rem; color: var(--accent); }
 
-        .news-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .news-update-note {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .news-card {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .news-card:hover {
-            border-color: var(--accent);
-        }
-
-        .news-date {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .news-headline {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
-        }
-
-        .news-summary {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 300;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .modal-description {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1rem;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: var(--accent);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #7d6cdf;
-            box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: transparent;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            transition: all 0.3s;
-            margin-top: 0.5rem;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+        /* News tab buttons */
+        .news-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .news-tab { padding: 0.5rem 1rem; background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2); border-radius: 20px; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; font-family: 'Noto Sans KR', sans-serif; transition: all 0.3s; }
+        .news-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .news-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .news-tab.active:hover { color: white; }
+        .news-loading { text-align: center; padding: 2rem; color: var(--text-secondary); }
 
         /* Settings panel */
-        .settings-panel {
-            display: none;
-            position: fixed;
-            top: 60px;
-            right: 0;
-            width: 300px;
-            max-height: calc(100vh - 60px);
-            background-color: var(--card);
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-            z-index: 250;
-        }
-
-        .settings-panel.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .settings-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            font-weight: 600;
-        }
-
-        .settings-body {
-            padding: 1.5rem;
-            flex: 1;
-        }
-
-        .settings-item {
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .toggle {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .toggle-switch {
-            width: 40px;
-            height: 24px;
-            background-color: var(--border);
-            border-radius: 12px;
-            cursor: pointer;
-            position: relative;
-            transition: background-color 0.3s;
-        }
-
-        .toggle-switch.active {
-            background-color: var(--green);
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: left 0.3s;
-        }
-
-        .toggle-switch.active::after {
-            left: 18px;
-        }
-
-        .select-input {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        /* Error message */
-        .error-message {
-            color: var(--red);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .success-message {
-            color: var(--green);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
+        .settings-panel { display: none; position: fixed; top: 60px; right: 0; width: 300px; max-height: calc(100vh - 60px); background-color: var(--card); border-left: 1px solid var(--border); overflow-y: auto; z-index: 250; }
+        .settings-panel.active { display: flex; flex-direction: column; }
+        .settings-header { padding: 1.5rem; border-bottom: 1px solid var(--border); font-weight: 600; }
+        .settings-body { padding: 1.5rem; flex: 1; }
+        .settings-item { margin-bottom: 1.5rem; }
+        .settings-label { display: block; font-weight: 500; margin-bottom: 0.5rem; }
+        .toggle { display: flex; align-items: center; gap: 1rem; }
+        .toggle-switch { width: 40px; height: 24px; background-color: var(--border); border-radius: 12px; cursor: pointer; position: relative; transition: background-color 0.3s; }
+        .toggle-switch.active { background-color: var(--green); }
+        .toggle-switch::after { content: ''; position: absolute; width: 20px; height: 20px; background-color: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.3s; }
+        .toggle-switch.active::after { left: 18px; }
+        .select-input { width: 100%; padding: 0.5rem; background-color: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: 'Noto Sans KR', sans-serif; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; background-color: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: 'Noto Sans KR', sans-serif; font-size: 1rem; }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(108, 92, 231, 0.2); }
+        .btn-primary { width: 100%; padding: 0.75rem 1rem; background-color: var(--accent); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; font-family: 'Noto Sans KR', sans-serif; transition: all 0.3s; }
+        .btn-primary:hover { background-color: #7d6cdf; box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+        .btn-secondary { width: 100%; padding: 0.75rem 1rem; background-color: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-weight: 600; cursor: pointer; font-size: 1rem; font-family: 'Noto Sans KR', sans-serif; transition: all 0.3s; margin-top: 0.5rem; }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .header {
-                padding: 1rem;
-            }
-
-            .header h1 {
-                font-size: 1.2rem;
-            }
-
-            .header-right {
-                gap: 1rem;
-            }
-
-            .macro-strip {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 0.75rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .macro-card {
-                padding: 0.75rem;
-                min-width: 120px;
-            }
-
-            .macro-value {
-                font-size: 1.1rem;
-            }
-
-            .stock-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tabs {
-                gap: 0.5rem;
-            }
-
-            .tab {
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .stock-price {
-                font-size: 1.5rem;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
-
-            .settings-panel {
-                width: 100%;
-                max-height: 50vh;
-            }
+            .container { padding: 1rem; }
+            .header { padding: 1rem; }
+            .header h1 { font-size: 1.2rem; }
+            .header-right { gap: 1rem; }
+            .macro-strip { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+            .macro-card { padding: 0.75rem; min-width: 120px; }
+            .macro-value { font-size: 1.1rem; }
+            .stock-grid { grid-template-columns: 1fr; }
+            .tabs { gap: 0.5rem; }
+            .tab { padding: 0.75rem 1rem; font-size: 0.9rem; }
+            .stock-price { font-size: 1.5rem; }
+            .settings-panel { width: 100%; max-height: 50vh; }
+            .period-grid { grid-template-columns: repeat(5, 1fr); }
         }
     </style>
 </head>
@@ -839,7 +223,6 @@
                 <input type="password" class="form-input" id="apiKeyInput" placeholder="Finnhub API 키">
                 <button class="btn-primary" onclick="updateApiKey()" style="margin-top: 0.5rem;">저장</button>
             </div>
-
             <div class="settings-item">
                 <label class="settings-label">
                     <div class="toggle">
@@ -848,7 +231,6 @@
                     </div>
                 </label>
             </div>
-
             <div class="settings-item">
                 <label class="settings-label">새로고침 주기</label>
                 <select class="select-input" id="refreshInterval" onchange="updateRefreshInterval()">
@@ -857,27 +239,14 @@
                     <option value="60">60초</option>
                 </select>
             </div>
-
             <div class="settings-item">
                 <button class="btn-secondary" onclick="clearAllData()">모든 데이터 초기화</button>
             </div>
         </div>
     </div>
 
-    <!-- API Key Modal -->
-    <div class="modal" id="apiKeyModal">
-        <div class="modal-content">
-            <h2 class="modal-title">Finnhub API 설정</h2>
-            <p class="modal-description">실시간 주식 데이터를 받기 위해 Finnhub API 키를 입력하세요.<br><a href="https://finnhub.io/" style="color: var(--accent);">Finnhub 웹사이트</a>에서 무료로 발급받을 수 있습니다.</p>
-            <div class="form-group">
-                <label class="form-label">API 키</label>
-                <input type="password" class="form-input" id="apiKeyInput2" placeholder="예: c1234567890abcdef">
-                <div id="apiKeyError" class="error-message"></div>
-                <div id="apiKeySuccess" class="success-message"></div>
-            </div>
-            <button class="btn-primary" onclick="validateAndSaveApiKey()">확인</button>
-        </div>
-    </div>
+    <!-- API Key Modal (hidden - hardcoded) -->
+    <div class="modal" id="apiKeyModal" style="display:none;"></div>
 
     <!-- Main Content -->
     <div class="container">
@@ -902,11 +271,38 @@
         <!-- Stock grid -->
         <div class="stock-grid" id="stockGrid"></div>
 
-        <!-- News section -->
+        <!-- Iran War Impact Section -->
+        <div class="news-section" id="warImpactSection" style="margin-bottom:1.5rem;">
+            <h2 class="news-title">⚔️ 이란 전쟁 영향 분석 <span style="font-size:0.7em;color:var(--text-secondary);font-weight:400;">(2/28 개전 전 대비)</span></h2>
+            <p class="news-update-note">전쟁 시작일(2/27 종가) 대비 현재가 변동률 — 실시간 자동 계산</p>
+            <div id="warImpactGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:1rem;"></div>
+            <div id="warMacroGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px;"></div>
+            <div style="margin-top:14px;padding:12px 16px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.2);border-radius:10px;font-size:12px;line-height:1.7;color:var(--text-secondary);">
+                <strong style="color:var(--text-primary);">💡 전략 시사점:</strong> 전문가들은 전쟁 충격이 약 1개월 내 안정화될 것으로 전망합니다. 현재 관심 종목들은 전쟁 전 대비 10~15% 할인된 상태로, 전쟁 종료 시 <strong style="color:var(--green);">가장 강하게 반등할 그룹</strong>에 속합니다. 기존 분할 매수 전략의 2차 매수를 앞당기는 것을 검토해 보세요.
+            </div>
+        </div>
+
+        <!-- Korean News section -->
         <div class="news-section">
-            <h2 class="news-title">📰 시장 뉴스</h2>
-            <p class="news-update-note">매일 오전 8시 자동 업데이트 (Cowork 스케줄 작업)</p>
-            <div class="news-grid" id="newsGrid"></div>
+            <h2 class="news-title">📰 실시간 한국어 뉴스</h2>
+            <p class="news-update-note">Google News 한국어 피드 — 자동 갱신</p>
+            <div class="news-tabs" id="newsTabs">
+                <button class="news-tab active" onclick="switchNewsTab('all')">전체</button>
+                <button class="news-tab" onclick="switchNewsTab('war')">이란 전쟁</button>
+                <button class="news-tab" onclick="switchNewsTab('stock')">보유 종목</button>
+                <button class="news-tab" onclick="switchNewsTab('market')">미국 증시</button>
+                <button class="news-tab" onclick="switchNewsTab('semi')">AI/반도체</button>
+            </div>
+            <div class="news-grid" id="newsGrid">
+                <div class="news-loading">뉴스를 불러오는 중...</div>
+            </div>
+        </div>
+
+        <!-- Fallback News (in case RSS fails) -->
+        <div class="news-section" id="fallbackNewsSection" style="display:none;">
+            <h2 class="news-title">📋 분석 리포트</h2>
+            <p class="news-update-note">수동 업데이트 분석 (최근)</p>
+            <div class="news-grid" id="fallbackNewsGrid"></div>
         </div>
     </div>
 
@@ -915,9 +311,64 @@
         const CONFIG = {
             FINNHUB_BASE: 'https://finnhub.io/api/v1',
             ER_API_BASE: 'https://open.er-api.com/v6',
+            RSS2JSON_BASE: 'https://api.rss2json.com/v1/api.json',
             REFRESH_INTERVAL: 30000,
             AUTO_REFRESH: true,
         };
+
+        // Pre-war prices (2/27 closing, before Iran war started 2/28)
+        const PRE_WAR_PRICES = {
+            date: '2026.2.27',
+            stocks: {
+                'MU': 487.00,
+                'MSFT': 418.00,
+                'AVGO': 349.00,
+                'AMZN': 223.00,
+                'ASTX': 62.50,
+                'BEX': 31.20
+            },
+            macro: {
+                'S&P 500': 6878.88,
+                'NASDAQ': 19850.00,
+                'KOSPI': 7050.00,
+                'USD/KRW': 1420.00,
+                'WTI Oil': 66.81,
+                'VIX': 14.20
+            }
+        };
+
+        // Korean name mapping for stocks
+        const STOCK_KR_NAMES = {
+            'MU': '마이크론',
+            'MSFT': '마이크로소프트',
+            'AVGO': '브로드컴',
+            'AMZN': '아마존',
+            'ASTX': 'ASTX',
+            'BEX': 'BEX'
+        };
+
+        // Korean news search queries per tab
+        const NEWS_QUERIES = {
+            all: '미국 증시 주식 반도체',
+            war: '이란 전쟁 중동 유가',
+            stock: '마이크론 마이크로소프트 브로드컴 아마존 주가',
+            market: '미국 증시 나스닥 S&P500 연준',
+            semi: 'AI 반도체 엔비디아 HBM 마이크론'
+        };
+
+        // Period definitions for historical performance
+        const PERIODS = [
+            { label: '1일', days: 1 },
+            { label: '3일', days: 3 },
+            { label: '1주', days: 7 },
+            { label: '10일', days: 10 },
+            { label: '2주', days: 14 },
+            { label: '30일', days: 30 },
+            { label: '2개월', days: 60 },
+            { label: '3개월', days: 90 },
+            { label: '6개월', days: 180 },
+            { label: '1년', days: 365 }
+        ];
 
         // Default portfolio
         const DEFAULT_STOCKS = {
@@ -945,66 +396,68 @@
             { label: 'VIX', symbol: '^VIX', type: 'stock' }
         ];
 
-        // Default news items
+        // Fallback news items
         const DEFAULT_NEWS = [
             {
-                date: new Date().toLocaleDateString('ko-KR'),
-                headline: '연준, 기준금리 현 수준 유지 결정',
-                summary: '미국 연방준비제도가 기준금리를 현 수준에서 유지하기로 결정했습니다. 인플레이션 추세와 경제 지표를 종합 고려한 결과입니다.'
+                date: '2026.3.21', tag: '긴급', tagClass: 'urgent',
+                headline: '이란 전쟁 3주째 지속 — 호르무즈 해협 봉쇄 우려로 유가 $94 돌파',
+                summary: '2/28 미국-이스라엘 연합 이란 공습 이후 분쟁 지속. JP모간은 해협 전면 봉쇄 시 유가 $120~130 전망.',
+                impact: '포트폴리오 영향: MU -12~15%, MSFT -5~8%, AVGO -8~10% (전쟁 전 대비)',
+                impactClass: 'negative'
             },
             {
-                date: new Date(Date.now() - 86400000).toLocaleDateString('ko-KR'),
-                headline: '테크 기업들, 인공지능 투자 확대',
-                summary: '주요 테크 기업들이 2026년 인공지능 연구개발에 대규모 투자를 단행하고 있습니다. 업계 성장률 전망이 밝습니다.'
+                date: '2026.3.21', tag: '긴급', tagClass: 'urgent',
+                headline: 'MU(마이크론) 실적 발표 후 -5% 추가 하락 — CAPEX $25B 충격',
+                summary: '분기 매출 가이던스 $33.5B 제시에도 $25B 설비투자 계획에 투자심리 악화. Forward PER 12.2배로 밸류에이션 매력은 여전.',
+                impact: '2차 매수 구간($404) 근접 중 — 저점 매수 기회 모니터링',
+                impactClass: 'opportunity'
             },
             {
-                date: new Date(Date.now() - 172800000).toLocaleDateString('ko-KR'),
-                headline: '한국 경제, 안정적 성장세 지속',
-                summary: '한국은행이 발표한 월간 경제동향에 따르면 국내 경제가 안정적인 성장세를 보이고 있으며, 기업 투자도 증가했습니다.'
+                date: '2026.3.21', tag: '분석', tagClass: 'analysis',
+                headline: '⚔️ 이란 전쟁 종료 시 최대 수혜주 분석',
+                summary: '전문가들은 전쟁 충격이 약 1개월 내 안정화 전망. 종료 시 반도체 공급망 정상화 + 에너지 비용 하락 = +15~20% 반등 예상.',
+                impact: '현재가가 전쟁 전 대비 10~15% 할인 — 2차 분할매수 앞당기기 검토',
+                impactClass: 'opportunity'
             }
         ];
 
         let currentTab = 'short';
+        let currentNewsTab = 'all';
         let stocks = {};
-        let apiKey = null;
+        let apiKey = 'd6va409r01qiiutb2g9gd6va409r01qiiutb2ga0';
         let macroData = {};
+        let candleCache = {};
+        let newsCache = {};
         let refreshInterval = null;
 
-        // Initialize app
+        // ==========================================
+        // Initialize
+        // ==========================================
         async function init() {
-            apiKey = localStorage.getItem('finnhub_api_key');
-            if (!apiKey) {
-                showApiKeyModal();
-            } else {
-                loadPortfolio();
-                renderNews();
-                await refreshAllData();
-                startAutoRefresh();
-            }
-
+            loadPortfolio();
+            renderFallbackNews();
+            await refreshAllData();
+            fetchAllKoreanNews();
+            startAutoRefresh();
             setupEventListeners();
         }
 
-        // Event listeners
         function setupEventListeners() {
             document.getElementById('settingsBtn').addEventListener('click', () => {
                 document.getElementById('settingsPanel').classList.toggle('active');
             });
-
             document.getElementById('refreshBtn').addEventListener('click', async () => {
                 await refreshAllData();
+                fetchAllKoreanNews();
             });
-
             document.getElementById('searchInput').addEventListener('input', (e) => {
                 handleSearch(e.target.value);
             });
-
             document.getElementById('searchInput').addEventListener('blur', () => {
                 setTimeout(() => {
                     document.getElementById('searchResults').classList.remove('active');
                 }, 200);
             });
-
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('#settingsBtn') && !e.target.closest('.settings-panel')) {
                     document.getElementById('settingsPanel').classList.remove('active');
@@ -1012,58 +465,9 @@
             });
         }
 
-        // API Key management
-        function showApiKeyModal() {
-            document.getElementById('apiKeyModal').classList.add('active');
-        }
-
-        async function validateAndSaveApiKey() {
-            const keyInput = document.getElementById('apiKeyInput2');
-            const key = keyInput.value.trim();
-            const errorDiv = document.getElementById('apiKeyError');
-            const successDiv = document.getElementById('apiKeySuccess');
-
-            errorDiv.textContent = '';
-            successDiv.textContent = '';
-
-            if (!key) {
-                errorDiv.textContent = 'API 키를 입력해주세요.';
-                return;
-            }
-
-            try {
-                const response = await fetch(`${CONFIG.FINNHUB_BASE}/quote?symbol=AAPL&token=${key}`);
-                if (response.ok) {
-                    localStorage.setItem('finnhub_api_key', key);
-                    apiKey = key;
-                    successDiv.textContent = '✓ API 키가 저장되었습니다.';
-                    setTimeout(() => {
-                        document.getElementById('apiKeyModal').classList.remove('active');
-                        loadPortfolio();
-                        renderNews();
-                        refreshAllData();
-                        startAutoRefresh();
-                    }, 1000);
-                } else {
-                    errorDiv.textContent = '유효하지 않은 API 키입니다.';
-                }
-            } catch (err) {
-                errorDiv.textContent = 'API 키 검증에 실패했습니다.';
-            }
-        }
-
-        function updateApiKey() {
-            const newKey = document.getElementById('apiKeyInput').value.trim();
-            if (newKey) {
-                localStorage.setItem('finnhub_api_key', newKey);
-                apiKey = newKey;
-                alert('API 키가 업데이트되었습니다.');
-                document.getElementById('apiKeyInput').value = '';
-                refreshAllData();
-            }
-        }
-
+        // ==========================================
         // Portfolio management
+        // ==========================================
         function loadPortfolio() {
             const stored = localStorage.getItem('portfolio');
             if (stored) {
@@ -1090,28 +494,24 @@
             renderStocks();
         }
 
-        // Search functionality
+        // ==========================================
+        // Search
+        // ==========================================
         async function handleSearch(query) {
             if (query.length < 1) {
                 document.getElementById('searchResults').classList.remove('active');
                 return;
             }
-
             try {
                 const response = await fetch(`${CONFIG.FINNHUB_BASE}/search?q=${encodeURIComponent(query)}&token=${apiKey}`);
                 const data = await response.json();
-
                 const resultsDiv = document.getElementById('searchResults');
                 resultsDiv.innerHTML = '';
-
                 if (data.result && data.result.length > 0) {
                     data.result.slice(0, 5).forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'search-result-item';
-                        div.innerHTML = `
-                            <div class="result-symbol">${item.symbol}</div>
-                            <div class="result-name">${item.description}</div>
-                        `;
+                        div.innerHTML = `<div class="result-symbol">${item.symbol}</div><div class="result-name">${item.description}</div>`;
                         div.addEventListener('click', () => addStock(item.symbol));
                         resultsDiv.appendChild(div);
                     });
@@ -1124,27 +524,16 @@
 
         function addStock(symbol) {
             symbol = symbol.toUpperCase();
-
             for (const category in stocks) {
                 if (stocks[category].some(s => s.symbol === symbol)) {
                     alert(`${symbol}은(는) 이미 포트폴리오에 있습니다.`);
                     return;
                 }
             }
-
             const newStock = { symbol };
-
-            if (currentTab === 'short') {
-                newStock.targetSell = 0;
-                newStock.stopLoss = 0;
-                newStock.invested = 0;
-            } else if (currentTab === 'long') {
-                newStock.buyZones = [];
-                newStock.weight = 0;
-            } else if (currentTab === 'watch') {
-                newStock.buyBelow = 0;
-            }
-
+            if (currentTab === 'short') { newStock.targetSell = 0; newStock.stopLoss = 0; newStock.invested = 0; }
+            else if (currentTab === 'long') { newStock.buyZones = []; newStock.weight = 0; }
+            else if (currentTab === 'watch') { newStock.buyBelow = 0; }
             stocks[currentTab].push(newStock);
             savePortfolio();
             renderStocks();
@@ -1158,11 +547,12 @@
             renderStocks();
         }
 
-        // Render stocks
+        // ==========================================
+        // Render stocks with period performance
+        // ==========================================
         function renderStocks() {
             const grid = document.getElementById('stockGrid');
             const categoryStocks = stocks[currentTab] || [];
-
             grid.innerHTML = '';
 
             categoryStocks.forEach((stock, index) => {
@@ -1172,14 +562,39 @@
                 const changePercent = data.dp || 0;
                 const high = data.h || 0;
                 const low = data.l || 0;
+                const krName = STOCK_KR_NAMES[stock.symbol] || stock.symbol;
 
                 const badgeClass = currentTab === 'short' ? 'badge-short' : (currentTab === 'long' ? 'badge-long' : 'badge-watch');
                 const badgeText = currentTab === 'short' ? 'Short' : (currentTab === 'long' ? 'Long' : 'Watch');
                 const changeColor = change >= 0 ? 'change-up' : 'change-down';
                 const arrow = change >= 0 ? '▲' : '▼';
 
-                let extraContent = '';
+                // Period performance HTML
+                const candles = candleCache[stock.symbol] || {};
+                let periodHTML = '<div class="period-grid">';
+                PERIODS.forEach(p => {
+                    const val = candles[p.days];
+                    if (val !== undefined && val !== null) {
+                        const cls = val >= 0 ? 'up' : 'down';
+                        const sign = val >= 0 ? '+' : '';
+                        periodHTML += `<div class="period-item"><span class="period-label">${p.label}</span><span class="period-value ${cls}">${sign}${val.toFixed(1)}%</span></div>`;
+                    } else {
+                        periodHTML += `<div class="period-item"><span class="period-label">${p.label}</span><span class="period-value loading">--</span></div>`;
+                    }
+                });
+                periodHTML += '</div>';
 
+                // War impact badge
+                let warBadge = '';
+                const prePrice = PRE_WAR_PRICES.stocks[stock.symbol];
+                if (prePrice && price) {
+                    const warChange = ((price - prePrice) / prePrice * 100).toFixed(1);
+                    const warCls = warChange >= 0 ? 'var(--green)' : 'var(--red)';
+                    const warSign = warChange >= 0 ? '+' : '';
+                    warBadge = `<span class="badge" style="background:rgba(255,107,107,0.15);color:${warCls};font-size:0.65rem;">전쟁 ${warSign}${warChange}%</span>`;
+                }
+
+                let extraContent = '';
                 if (currentTab === 'short') {
                     const targetPercent = stock.targetSell ? ((stock.targetSell - price) / price * 100) : 0;
                     const stopPercent = stock.stopLoss ? ((price - stock.stopLoss) / price * 100) : 0;
@@ -1193,8 +608,7 @@
                                 <span class="zone-label">손절 (${stock.stopLoss})</span>
                                 <span class="zone-value" style="color: var(--red);">${stopPercent.toFixed(1)}%</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 } else if (currentTab === 'long') {
                     extraContent = '<div class="buy-zones">';
                     if (stock.buyZones && stock.buyZones.length > 0) {
@@ -1213,22 +627,23 @@
                 card.innerHTML = `
                     <div class="stock-card-header">
                         <div class="stock-info">
-                            <div class="stock-ticker">${stock.symbol}</div>
-                            <div class="stock-name">${stock.symbol}</div>
+                            <div class="stock-ticker">${stock.symbol} <span style="font-weight:400;font-size:0.85rem;color:var(--text-secondary);">${krName}</span></div>
                             <div class="stock-badges">
                                 <span class="badge ${badgeClass}">${badgeText}</span>
+                                ${warBadge}
                             </div>
                         </div>
                         <button class="btn-delete" onclick="deleteStock('${currentTab}', ${index})">✕</button>
                     </div>
-
                     <div class="stock-price">$${price.toFixed(2)}</div>
-
                     <div class="stock-change ${changeColor}">
                         <span class="change-amount">${arrow} ${Math.abs(change).toFixed(2)}</span>
                         <span class="change-percent">${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</span>
                     </div>
-
+                    <div style="margin:0.5rem 0;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;">
+                        <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:6px;font-weight:600;">📈 기간별 수익률 (최근 고점 대비)</div>
+                        ${periodHTML}
+                    </div>
                     <div class="week52-container">
                         <div class="week52-label">
                             <span>${low.toFixed(2)}</span>
@@ -1239,7 +654,6 @@
                             <div class="week52-position" style="left: ${weekHighPercent}%"></div>
                         </div>
                     </div>
-
                     ${extraContent}
                 `;
                 grid.appendChild(card);
@@ -1250,11 +664,12 @@
             }
         }
 
+        // ==========================================
         // Render macro indicators
-        async function renderMacro() {
+        // ==========================================
+        function renderMacro() {
             const strip = document.getElementById('macroStrip');
             strip.innerHTML = '';
-
             for (const indicator of MACRO_INDICATORS) {
                 const data = macroData[indicator.label] || {};
                 const value = data.value || 'N/A';
@@ -1262,7 +677,6 @@
                 const changePercent = data.changePercent || 0;
                 const changeClass = change >= 0 ? 'change-up' : 'change-down';
                 const arrow = change >= 0 ? '▲' : '▼';
-
                 const card = document.createElement('div');
                 card.className = 'macro-card';
                 card.innerHTML = `
@@ -1277,24 +691,266 @@
             }
         }
 
-        // Render news
-        function renderNews() {
-            const newsGrid = document.getElementById('newsGrid');
-            newsGrid.innerHTML = '';
+        // ==========================================
+        // Render War Impact
+        // ==========================================
+        function renderWarImpact() {
+            const stockGrid = document.getElementById('warImpactGrid');
+            const macroGrid = document.getElementById('warMacroGrid');
+            if (!stockGrid || !macroGrid) return;
+            stockGrid.innerHTML = '';
+            macroGrid.innerHTML = '';
 
-            DEFAULT_NEWS.forEach(news => {
+            const allStocks = [...(stocks.short||[]), ...(stocks.long||[]), ...(stocks.watch||[])];
+            allStocks.forEach(s => {
+                const prePrice = PRE_WAR_PRICES.stocks[s.symbol];
+                const current = macroData[s.symbol]?.c;
+                if (!prePrice || !current) return;
+                const change = ((current - prePrice) / prePrice * 100).toFixed(1);
+                const isUp = change >= 0;
+                const card = document.createElement('div');
+                card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;transition:all 0.3s;';
+                card.innerHTML = `
+                    <div style="font-size:16px;font-weight:700;margin-bottom:4px;">${s.symbol}</div>
+                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">전쟁 전 $${prePrice.toFixed(2)}</div>
+                    <div style="font-size:22px;font-weight:700;color:${isUp ? 'var(--green)' : 'var(--red)'};">
+                        ${isUp ? '▲' : '▼'} ${change}%
+                    </div>
+                    <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">현재 $${current.toFixed(2)}</div>
+                    <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;">
+                        <div style="height:100%;width:${Math.min(Math.abs(change)*3, 100)}%;background:${isUp ? 'var(--green)' : 'var(--red)'};border-radius:2px;"></div>
+                    </div>
+                `;
+                stockGrid.appendChild(card);
+            });
+
+            const macroLabels = { 'S&P 500': 'S&P 500', 'NASDAQ': 'NASDAQ', 'KOSPI': 'KOSPI', 'USD/KRW': '환율', 'WTI Oil': 'WTI 유가', 'VIX': 'VIX' };
+            Object.entries(PRE_WAR_PRICES.macro).forEach(([key, preVal]) => {
+                const currentVal = macroData[key]?.value || 0;
+                if (!currentVal) return;
+                const change = ((currentVal - preVal) / preVal * 100).toFixed(1);
+                const isUp = change >= 0;
+                const isBadDirection = (key === 'VIX' || key === 'USD/KRW' || key === 'WTI Oil') ? isUp : !isUp;
+                const card = document.createElement('div');
+                card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;';
+                card.innerHTML = `
+                    <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">${macroLabels[key] || key}</div>
+                    <div style="font-size:16px;font-weight:700;color:${isBadDirection ? 'var(--red)' : 'var(--green)'};margin-top:3px;">
+                        ${isUp ? '▲' : '▼'} ${change}%
+                    </div>
+                    <div style="font-size:10px;color:var(--text-secondary);margin-top:2px;">${preVal.toLocaleString()} → ${typeof currentVal === 'number' ? currentVal.toLocaleString() : currentVal}</div>
+                `;
+                macroGrid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // Korean News via Google News RSS + rss2json
+        // ==========================================
+        let currentNewsTab_active = 'all';
+
+        function switchNewsTab(tab) {
+            currentNewsTab_active = tab;
+            document.querySelectorAll('.news-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderKoreanNews(tab);
+        }
+
+        async function fetchKoreanNews(query) {
+            const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`;
+            const apiUrl = `${CONFIG.RSS2JSON_BASE}?rss_url=${encodeURIComponent(rssUrl)}&count=12`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                if (data.status === 'ok' && data.items) {
+                    return data.items.map(item => ({
+                        title: item.title || '',
+                        link: item.link || '#',
+                        pubDate: item.pubDate || '',
+                        source: item.author || extractSource(item.title),
+                        description: cleanDescription(item.description || item.content || '')
+                    }));
+                }
+            } catch (err) {
+                console.error('Korean news fetch error:', err);
+            }
+            return null;
+        }
+
+        function extractSource(title) {
+            const match = title.match(/ - ([^-]+)$/);
+            return match ? match[1].trim() : '';
+        }
+
+        function cleanDescription(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            const text = div.textContent || div.innerText || '';
+            return text.substring(0, 150).trim();
+        }
+
+        async function fetchAllKoreanNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '<div class="news-loading">🔄 한국어 뉴스를 불러오는 중...</div>';
+
+            let allFetched = false;
+            for (const [key, query] of Object.entries(NEWS_QUERIES)) {
+                const items = await fetchKoreanNews(query);
+                if (items && items.length > 0) {
+                    newsCache[key] = items;
+                    allFetched = true;
+                }
+                // Small delay to not overwhelm the API
+                await new Promise(r => setTimeout(r, 300));
+            }
+
+            if (allFetched) {
+                renderKoreanNews(currentNewsTab_active);
+            } else {
+                // Fallback to default news
+                newsGrid.innerHTML = '';
+                document.getElementById('fallbackNewsSection').style.display = 'block';
+                renderFallbackNews();
+                newsGrid.innerHTML = '<div class="news-loading" style="color:var(--yellow);">⚠️ 실시간 뉴스를 불러올 수 없습니다. 아래 분석 리포트를 참고하세요.</div>';
+            }
+        }
+
+        function renderKoreanNews(tab) {
+            const newsGrid = document.getElementById('newsGrid');
+            const items = newsCache[tab] || newsCache['all'] || [];
+
+            if (items.length === 0) {
+                newsGrid.innerHTML = '<div class="news-loading">뉴스가 없습니다.</div>';
+                return;
+            }
+
+            newsGrid.innerHTML = '';
+            items.slice(0, 12).forEach(item => {
+                const date = item.pubDate ? new Date(item.pubDate).toLocaleDateString('ko-KR') : '';
                 const card = document.createElement('div');
                 card.className = 'news-card';
+                card.onclick = () => window.open(item.link, '_blank');
+
+                // Determine tag based on keywords
+                let tag = '뉴스';
+                let tagColor = { bg: 'rgba(79,195,247,0.15)', color: '#4fc3f7' };
+                const title = item.title.toLowerCase();
+                if (title.includes('이란') || title.includes('전쟁') || title.includes('중동')) {
+                    tag = '전쟁'; tagColor = { bg: 'rgba(255,107,107,0.15)', color: '#ff6b6b' };
+                } else if (title.includes('반도체') || title.includes('ai') || title.includes('hbm') || title.includes('엔비디아')) {
+                    tag = 'AI/반도체'; tagColor = { bg: 'rgba(108,92,231,0.15)', color: '#a29bfe' };
+                } else if (title.includes('마이크론') || title.includes('mu') || title.includes('마이크로소프트') || title.includes('msft') || title.includes('브로드컴') || title.includes('아마존')) {
+                    tag = '보유종목'; tagColor = { bg: 'rgba(0,210,160,0.15)', color: '#00d2a0' };
+                } else if (title.includes('나스닥') || title.includes('s&p') || title.includes('증시') || title.includes('연준') || title.includes('금리')) {
+                    tag = '시장'; tagColor = { bg: 'rgba(255,167,38,0.15)', color: '#ffa726' };
+                }
+
                 card.innerHTML = `
-                    <div class="news-date">${news.date}</div>
-                    <div class="news-headline">${news.headline}</div>
-                    <div class="news-summary">${news.summary}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:${tagColor.bg};color:${tagColor.color};text-transform:uppercase;letter-spacing:0.5px;">${tag}</span>
+                        <span class="news-date">${date}</span>
+                    </div>
+                    <div class="news-headline">${item.title}</div>
+                    ${item.description ? `<div class="news-summary">${item.description}</div>` : ''}
+                    ${item.source ? `<div class="news-source">${item.source}</div>` : ''}
                 `;
                 newsGrid.appendChild(card);
             });
         }
 
+        function renderFallbackNews() {
+            const newsGrid = document.getElementById('fallbackNewsGrid');
+            if (!newsGrid) return;
+            newsGrid.innerHTML = '';
+
+            const tagColors = {
+                '긴급': { bg: 'rgba(255,107,107,0.15)', color: '#ff6b6b' },
+                '중요': { bg: 'rgba(255,167,38,0.15)', color: '#ffa726' },
+                '분석': { bg: 'rgba(108,92,231,0.15)', color: '#a29bfe' },
+                '시장': { bg: 'rgba(79,195,247,0.15)', color: '#4fc3f7' },
+                '호재': { bg: 'rgba(0,210,160,0.15)', color: '#00d2a0' },
+                '참고': { bg: 'rgba(160,160,160,0.15)', color: '#a0a0a0' }
+            };
+            const impactColors = {
+                'negative': { bg: 'rgba(255,107,107,0.1)', color: '#ff6b6b', border: 'rgba(255,107,107,0.3)' },
+                'opportunity': { bg: 'rgba(0,210,160,0.1)', color: '#00d2a0', border: 'rgba(0,210,160,0.3)' },
+                'positive': { bg: 'rgba(0,210,160,0.1)', color: '#00d2a0', border: 'rgba(0,210,160,0.3)' },
+                'neutral': { bg: 'rgba(79,195,247,0.1)', color: '#4fc3f7', border: 'rgba(79,195,247,0.3)' }
+            };
+
+            DEFAULT_NEWS.forEach(news => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                const tc = tagColors[news.tag] || tagColors['참고'];
+                const ic = impactColors[news.impactClass] || impactColors['neutral'];
+                card.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:${tc.bg};color:${tc.color};text-transform:uppercase;letter-spacing:0.5px;">${news.tag}</span>
+                        <span class="news-date">${news.date}</span>
+                    </div>
+                    <div class="news-headline">${news.headline}</div>
+                    <div class="news-summary">${news.summary}</div>
+                    ${news.impact ? `<div style="margin-top:8px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;background:${ic.bg};color:${ic.color};border:1px solid ${ic.border};">${news.impact}</div>` : ''}
+                `;
+                newsGrid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // Finnhub Candle Data for Period Performance
+        // ==========================================
+        async function fetchCandleData(symbol) {
+            const now = Math.floor(Date.now() / 1000);
+            // Fetch 1 year of daily data
+            const from = now - (400 * 24 * 60 * 60); // 400 days back to cover 1 year + buffer
+            try {
+                const response = await fetch(`${CONFIG.FINNHUB_BASE}/stock/candle?symbol=${symbol}&resolution=D&from=${from}&to=${now}&token=${apiKey}`);
+                const data = await response.json();
+                if (data.s === 'ok' && data.c && data.c.length > 0) {
+                    const closes = data.c;
+                    const currentPrice = closes[closes.length - 1];
+                    const result = {};
+
+                    PERIODS.forEach(p => {
+                        // Find the closing price from `p.days` trading days ago
+                        // Approximate: skip weekends, so trading days ~ calendar days * 5/7
+                        const tradingDaysBack = Math.min(Math.round(p.days * 5 / 7), closes.length - 1);
+                        const idx = Math.max(closes.length - 1 - tradingDaysBack, 0);
+
+                        // Find the HIGH in this period to calculate "from recent high"
+                        const periodCloses = closes.slice(idx);
+                        const periodHigh = Math.max(...periodCloses);
+                        const changeFromHigh = ((currentPrice - periodHigh) / periodHigh) * 100;
+                        result[p.days] = changeFromHigh;
+                    });
+
+                    candleCache[symbol] = result;
+                    return result;
+                }
+            } catch (err) {
+                console.error(`Candle fetch error for ${symbol}:`, err);
+            }
+            return null;
+        }
+
+        async function fetchAllCandles() {
+            const allSymbols = new Set();
+            for (const category in stocks) {
+                for (const stock of stocks[category]) {
+                    allSymbols.add(stock.symbol);
+                }
+            }
+
+            for (const symbol of allSymbols) {
+                await fetchCandleData(symbol);
+                // Small delay to respect rate limits
+                await new Promise(r => setTimeout(r, 200));
+            }
+        }
+
+        // ==========================================
         // Fetch stock data
+        // ==========================================
         async function fetchStockData(symbol) {
             try {
                 const response = await fetch(`${CONFIG.FINNHUB_BASE}/quote?symbol=${symbol}&token=${apiKey}`);
@@ -1306,7 +962,6 @@
             }
         }
 
-        // Fetch macro data
         async function fetchMacroData() {
             for (const indicator of MACRO_INDICATORS) {
                 if (indicator.type === 'forex') {
@@ -1314,35 +969,23 @@
                         const response = await fetch(`${CONFIG.ER_API_BASE}/latest/USD`);
                         const data = await response.json();
                         if (data.rates && data.rates.KRW) {
-                            macroData[indicator.label] = {
-                                value: data.rates.KRW,
-                                change: 0,
-                                changePercent: 0
-                            };
+                            macroData[indicator.label] = { value: data.rates.KRW, change: 0, changePercent: 0 };
                         }
-                    } catch (err) {
-                        console.error('Forex error:', err);
-                    }
+                    } catch (err) { console.error('Forex error:', err); }
                 } else if (indicator.type === 'fallback') {
-                    macroData[indicator.label] = {
-                        value: 2500 + Math.random() * 100,
-                        change: Math.random() * 50 - 25,
-                        changePercent: Math.random() * 2 - 1
-                    };
+                    macroData[indicator.label] = { value: 2500 + Math.random() * 100, change: Math.random() * 50 - 25, changePercent: Math.random() * 2 - 1 };
                 } else {
                     const data = await fetchStockData(indicator.symbol);
                     if (data && data.c) {
-                        macroData[indicator.label] = {
-                            value: data.c,
-                            change: data.d || 0,
-                            changePercent: data.dp || 0
-                        };
+                        macroData[indicator.label] = { value: data.c, change: data.d || 0, changePercent: data.dp || 0 };
                     }
                 }
             }
         }
 
+        // ==========================================
         // Refresh all data
+        // ==========================================
         async function refreshAllData() {
             if (!apiKey) return;
 
@@ -1359,24 +1002,35 @@
                 }
             }
 
+            // Fetch candle data for period performance
+            await fetchAllCandles();
+
             renderStocks();
+            renderWarImpact();
             updateLastUpdate();
         }
 
-        // Check price alerts
+        // ==========================================
+        // Alerts
+        // ==========================================
         function checkAlerts(stock, data) {
             const price = data.c || 0;
-
             if (stock.targetSell && price >= stock.targetSell) {
-                showAlert(`${stock.symbol}: 목표가 도달! $${price.toFixed(2)}`);
+                showAlert(`🎯 ${stock.symbol}: 목표가 도달! $${price.toFixed(2)}`);
             }
-
             if (stock.stopLoss && price <= stock.stopLoss) {
-                showAlert(`${stock.symbol}: 손절 가격 도달! $${price.toFixed(2)}`);
+                showAlert(`🚨 ${stock.symbol}: 손절 가격 도달! $${price.toFixed(2)}`);
             }
-
             if (stock.buyBelow && price <= stock.buyBelow) {
-                showAlert(`${stock.symbol}: 매수 신호! $${price.toFixed(2)}`);
+                showAlert(`💰 ${stock.symbol}: 매수 신호! $${price.toFixed(2)}`);
+            }
+            // Check buy zones for long stocks
+            if (stock.buyZones) {
+                stock.buyZones.forEach(zone => {
+                    if (price <= zone * 1.02 && price >= zone * 0.98) {
+                        showAlert(`📊 ${stock.symbol}: 매수 구간 $${zone} 근접! 현재 $${price.toFixed(2)}`);
+                    }
+                });
             }
         }
 
@@ -1384,19 +1038,18 @@
             const banner = document.getElementById('alertBanner');
             document.getElementById('alertText').textContent = message;
             banner.classList.add('active');
-            setTimeout(() => {
-                banner.classList.remove('active');
-            }, 5000);
+            setTimeout(() => banner.classList.remove('active'), 5000);
         }
 
-        // Update UI
+        // ==========================================
+        // UI updates
+        // ==========================================
         function updateLastUpdate() {
             const now = new Date();
             const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
             document.getElementById('lastUpdate').textContent = time;
         }
 
-        // Auto refresh
         function startAutoRefresh() {
             if (refreshInterval) clearInterval(refreshInterval);
             refreshInterval = setInterval(() => {
@@ -1404,6 +1057,12 @@
                     refreshAllData();
                 }
             }, CONFIG.REFRESH_INTERVAL);
+            // Refresh news every 10 minutes
+            setInterval(() => {
+                if (CONFIG.AUTO_REFRESH) {
+                    fetchAllKoreanNews();
+                }
+            }, 600000);
         }
 
         function toggleAutoRefresh() {
@@ -1415,6 +1074,17 @@
             const interval = parseInt(document.getElementById('refreshInterval').value) * 1000;
             CONFIG.REFRESH_INTERVAL = interval;
             startAutoRefresh();
+        }
+
+        function updateApiKey() {
+            const newKey = document.getElementById('apiKeyInput').value.trim();
+            if (newKey) {
+                localStorage.setItem('finnhub_api_key', newKey);
+                apiKey = newKey;
+                alert('API 키가 업데이트되었습니다.');
+                document.getElementById('apiKeyInput').value = '';
+                refreshAllData();
+            }
         }
 
         function clearAllData() {
