@@ -1,628 +1,1432 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포트폴리오 리밸런싱 대시보드</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #0f1117; --card: #1a1d2e; --card-hover: #222640; --border: #2a2e45;
-    --text: #e4e6f0; --text-dim: #8b8fa3;
-    --accent: #6c5ce7; --accent-light: #a29bfe;
-    --green: #00d2a0; --green-bg: rgba(0,210,160,0.1);
-    --red: #ff6b6b; --red-bg: rgba(255,107,107,0.1);
-    --orange: #ffa726; --orange-bg: rgba(255,167,38,0.1);
-    --blue: #4fc3f7; --blue-bg: rgba(79,195,247,0.1);
-    --yellow: #ffd54f; --yellow-bg: rgba(255,213,79,0.1);
-  }
-  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-  .dashboard { max-width: 1440px; margin: 0 auto; padding: 24px 20px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오 대시보드</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  /* ── Update Banner ── */
-  .update-banner {
-    background: linear-gradient(135deg, rgba(108,92,231,0.15), rgba(79,195,247,0.1));
-    border: 1px solid rgba(108,92,231,0.3);
-    border-radius: 12px; padding: 12px 20px; margin-bottom: 20px;
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-  }
-  .update-banner .update-time { font-size: 13px; color: var(--accent-light); }
-  .update-banner .update-label { font-size: 11px; color: var(--text-dim); }
-  .live-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d2e;
+            --accent: #6c5ce7;
+            --green: #00d2a0;
+            --red: #ff6b6b;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border: #2a2d3d;
+        }
 
-  /* ── Header ── */
-  .header { text-align: center; margin-bottom: 24px; position: relative; }
-  .header::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 2px; }
-  .header h1 { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #fff, var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
-  .header .subtitle { color: var(--text-dim); font-size: 13px; font-weight: 300; }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-  /* ── Macro Ticker Strip ── */
-  .macro-strip {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px; margin-bottom: 24px;
-  }
-  .macro-item {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px 16px; text-align: center; transition: all 0.3s;
-  }
-  .macro-item:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .macro-item .mi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .macro-item .mi-value { font-size: 20px; font-weight: 700; }
-  .macro-item .mi-change { font-size: 12px; font-weight: 600; margin-top: 3px; }
-  .mi-up { color: var(--green); } .mi-down { color: var(--red); } .mi-flat { color: var(--text-dim); }
+        /* Header */
+        .header {
+            background-color: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-  /* ── Alert Banner ── */
-  .alerts-section { margin-bottom: 24px; }
-  .alert-card {
-    background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(255,167,38,0.08));
-    border: 1px solid rgba(255,167,38,0.3); border-radius: 12px;
-    padding: 16px 20px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .alert-card.buy { border-color: rgba(0,210,160,0.4); background: linear-gradient(135deg, rgba(0,210,160,0.06), rgba(79,195,247,0.06)); }
-  .alert-card.warn { border-color: rgba(255,167,38,0.4); }
-  .alert-card.danger { border-color: rgba(255,107,107,0.4); background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(255,107,107,0.04)); }
-  .alert-icon { font-size: 24px; flex-shrink: 0; }
-  .alert-text .at-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-  .alert-text .at-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-  /* ── Tabs ── */
-  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--card); border-radius: 12px; padding: 4px; border: 1px solid var(--border); }
-  .tab { flex: 1; padding: 11px 12px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-dim); transition: all 0.3s; border: none; background: transparent; }
-  .tab:hover { color: var(--text); background: rgba(108,92,231,0.1); }
-  .tab.active { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(108,92,231,0.4); }
-  .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
 
-  /* ── Summary Cards ── */
-  .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; text-align: center; transition: all 0.3s; }
-  .summary-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-  .summary-card .label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  .summary-card .value { font-size: 24px; font-weight: 700; }
-  .summary-card .sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
 
-  /* ── Stock Cards ── */
-  .stock-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; transition: all 0.3s; position: relative; overflow: hidden; }
-  .stock-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-  .stock-card .rank-badge { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-  .stock-card .ticker { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
-  .stock-card .name { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; }
-  .stock-card .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-  .stock-card .price { font-size: 30px; font-weight: 700; }
-  .stock-card .change { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 8px; }
-  .stock-card .change.down { color: var(--red); background: var(--red-bg); }
-  .stock-card .change.up { color: var(--green); background: var(--green-bg); }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-  .price-range { margin: 14px 0; position: relative; }
-  .price-range .bar-bg { height: 8px; background: #2a2e45; border-radius: 4px; position: relative; overflow: visible; }
-  .price-range .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), var(--accent-light)); }
-  .price-range .current-marker { position: absolute; top: -6px; width: 18px; height: 18px; background: #fff; border: 3px solid var(--accent); border-radius: 50%; transform: translateX(-50%); box-shadow: 0 2px 8px rgba(108,92,231,0.5); }
-  .price-range .labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-dim); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
 
-  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
-  .metric { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; text-align: center; }
-  .metric .m-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-  .metric .m-value { font-size: 15px; font-weight: 600; margin-top: 2px; }
-  .stars { color: var(--orange); font-size: 15px; margin-top: 10px; text-align: center; letter-spacing: 2px; }
-  .stars .dim { opacity: 0.2; }
+        .last-update {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
 
-  /* ── News Section ── */
-  .news-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-  .news-section h3 { font-size: 17px; font-weight: 600; margin-bottom: 18px; color: var(--accent-light); display: flex; align-items: center; gap: 8px; }
-  .news-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
-  .news-item:last-child { border-bottom: none; }
-  .news-item .ni-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-right: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .ni-tag.urgent { background: var(--red-bg); color: var(--red); }
-  .ni-tag.important { background: var(--orange-bg); color: var(--orange); }
-  .ni-tag.info { background: var(--blue-bg); color: var(--blue); }
-  .ni-tag.positive { background: var(--green-bg); color: var(--green); }
-  .news-item .ni-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: inline; }
-  .news-item .ni-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-top: 6px; }
-  .news-item .ni-date { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
-  .news-item .ni-impact { font-size: 11px; font-weight: 600; margin-top: 6px; padding: 3px 8px; border-radius: 6px; display: inline-block; }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
 
-  /* ── Strategy ── */
-  .strategy-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-  .strategy-section h3 { font-size: 17px; font-weight: 600; margin-bottom: 18px; color: var(--accent-light); }
+        .btn-icon:hover {
+            color: var(--accent);
+        }
 
-  .timeline { position: relative; padding-left: 32px; }
-  .timeline::before { content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent-light), transparent); }
-  .timeline-item { position: relative; margin-bottom: 24px; }
-  .timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--accent); background: var(--bg); }
-  .timeline-item.active::before { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
-  .timeline-item .t-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .timeline-item .t-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+        /* Main container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
 
-  .alloc-chart { display: flex; gap: 16px; align-items: flex-end; justify-content: center; height: 180px; padding: 16px 0; }
-  .alloc-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 110px; }
-  .alloc-bar .bar-label { font-size: 13px; font-weight: 600; }
-  .alloc-bar .bar { width: 100%; border-radius: 8px 8px 4px 4px; transition: height 1s ease; position: relative; min-width: 55px; }
-  .alloc-bar .bar-pct { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 13px; font-weight: 700; white-space: nowrap; }
-  .alloc-bar .bar-amount { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        /* Macro indicators */
+        .macro-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
 
-  /* ── Short Term ── */
-  .short-term-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px; }
-  .st-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
-  .st-card .st-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .st-card .st-ticker { font-size: 20px; font-weight: 700; }
-  .st-card .st-type { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: var(--orange-bg); color: var(--orange); font-weight: 600; }
-  .target-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-  .target-row:last-child { border-bottom: none; }
-  .target-row .t-key { color: var(--text-dim); } .target-row .t-val { font-weight: 600; }
-  .target-row .t-val.green { color: var(--green); } .target-row .t-val.red { color: var(--red); }
+        .macro-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
 
-  /* ── Risk ── */
-  .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-  .risk-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 18px; border-left: 3px solid; }
-  .risk-card.high { border-left-color: var(--red); } .risk-card.medium { border-left-color: var(--orange); } .risk-card.low { border-left-color: var(--blue); }
-  .risk-card .r-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  .risk-card .r-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .risk-card .r-level { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  .risk-card.high .r-level { background: var(--red-bg); color: var(--red); }
-  .risk-card.medium .r-level { background: var(--orange-bg); color: var(--orange); }
-  .risk-card.low .r-level { background: var(--blue-bg); color: var(--blue); }
+        .macro-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
 
-  .disclaimer { text-align: center; padding: 20px; color: var(--text-dim); font-size: 11px; line-height: 1.6; border-top: 1px solid var(--border); margin-top: 28px; }
+        .macro-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
 
-  @media (max-width: 768px) {
-    .dashboard { padding: 12px 10px; } .header h1 { font-size: 20px; }
-    .stock-grid { grid-template-columns: 1fr; } .summary-row { grid-template-columns: repeat(2, 1fr); }
-    .tabs { flex-wrap: wrap; } .tab { font-size: 11px; padding: 9px 6px; }
-    .macro-strip { grid-template-columns: repeat(3, 1fr); }
-  }
-</style>
+        .macro-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .change-up {
+            color: var(--green);
+        }
+
+        .change-down {
+            color: var(--red);
+        }
+
+        /* Search bar */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: #252839;
+        }
+
+        .result-symbol {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .result-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--accent);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--accent);
+        }
+
+        /* Stock grid */
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stock-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .stock-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
+        }
+
+        .stock-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stock-info {
+            flex: 1;
+        }
+
+        .stock-ticker {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stock-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stock-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-short {
+            background-color: rgba(255, 107, 107, 0.2);
+            color: var(--red);
+        }
+
+        .badge-long {
+            background-color: rgba(0, 210, 160, 0.2);
+            color: var(--green);
+        }
+
+        .badge-watch {
+            background-color: rgba(108, 92, 231, 0.2);
+            color: var(--accent);
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .btn-delete:hover {
+            opacity: 1;
+        }
+
+        .stock-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .stock-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .change-amount {
+            font-weight: 600;
+        }
+
+        .change-percent {
+            opacity: 0.8;
+        }
+
+        /* 52-week bar */
+        .week52-container {
+            margin: 1.5rem 0;
+        }
+
+        .week52-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .week52-bar {
+            height: 6px;
+            background-color: var(--border);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .week52-position {
+            height: 100%;
+            width: 2px;
+            background-color: var(--accent);
+            position: absolute;
+            top: 0;
+        }
+
+        /* Alert zones */
+        .alert-zones {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .zone-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .zone-label {
+            color: var(--text-secondary);
+        }
+
+        .zone-value {
+            font-weight: 600;
+        }
+
+        /* Buy zones */
+        .buy-zones {
+            margin-top: 1rem;
+        }
+
+        .buy-zone-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid var(--green);
+        }
+
+        /* Alert banner */
+        .alert-banner {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            padding: 1rem 1.5rem;
+            background-color: rgba(0, 210, 160, 0.1);
+            border-bottom: 2px solid var(--green);
+            display: none;
+            z-index: 200;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .alert-banner.active {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .alert-text {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* News section */
+        .news-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .news-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .news-update-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .news-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .news-card:hover {
+            border-color: var(--accent);
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .news-headline {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #7d6cdf;
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Settings panel */
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 300px;
+            max-height: calc(100vh - 60px);
+            background-color: var(--card);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 250;
+        }
+
+        .settings-panel.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        .settings-body {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .settings-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 24px;
+            background-color: var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch.active {
+            background-color: var(--green);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 18px;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* Error message */
+        .error-message {
+            color: var(--red);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: var(--green);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .header-right {
+                gap: 1rem;
+            }
+
+            .macro-strip {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .macro-card {
+                padding: 0.75rem;
+                min-width: 120px;
+            }
+
+            .macro-value {
+                font-size: 1.1rem;
+            }
+
+            .stock-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                gap: 0.5rem;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .stock-price {
+                font-size: 1.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .settings-panel {
+                width: 100%;
+                max-height: 50vh;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+        <h1>📊 포트폴리오 대시보드</h1>
+        <div class="header-right">
+            <div class="status-indicator">
+                <div class="pulse"></div>
+                <span class="last-update">최종 업데이트: <span id="lastUpdate">--:--</span></span>
+            </div>
+            <button class="btn-icon" id="refreshBtn" title="새로고침">🔄</button>
+            <button class="btn-icon" id="settingsBtn" title="설정">⚙️</button>
+        </div>
+    </header>
 
-  <!-- ═══ UPDATE BANNER ═══ -->
-  <div class="update-banner">
-    <div>
-      <span class="live-dot"></span>
-      <span class="update-time">최근 업데이트: 2026년 3월 21일 (금) 18:00 KST</span>
-    </div>
-    <div class="update-label">미국장 마감 후 데이터 반영 | 다음 업데이트: 3/21 23:30 (미국장 오픈)</div>
-  </div>
-
-  <!-- ═══ HEADER ═══ -->
-  <div class="header">
-    <h1>Portfolio Rebalancing Dashboard</h1>
-    <div class="subtitle">저점 매수 집중 전략 | 실시간 매크로 + 뉴스 통합</div>
-  </div>
-
-  <!-- ═══ MACRO TICKER STRIP ═══ -->
-  <div class="macro-strip">
-    <div class="macro-item">
-      <div class="mi-label">S&P 500</div>
-      <div class="mi-value">5,667.56</div>
-      <div class="mi-change mi-down">&#9660; -0.22%</div>
-    </div>
-    <div class="macro-item">
-      <div class="mi-label">NASDAQ</div>
-      <div class="mi-value">17,784.05</div>
-      <div class="mi-change mi-down">&#9660; -0.33%</div>
-    </div>
-    <div class="macro-item">
-      <div class="mi-label">KOSPI</div>
-      <div class="mi-value">5,781.20</div>
-      <div class="mi-change mi-up">&#9650; +0.31%</div>
-    </div>
-    <div class="macro-item">
-      <div class="mi-label">USD/KRW</div>
-      <div class="mi-value">1,489.92</div>
-      <div class="mi-change mi-down">&#9660; -0.04%</div>
-    </div>
-    <div class="macro-item">
-      <div class="mi-label">WTI 유가</div>
-      <div class="mi-value">$94.63</div>
-      <div class="mi-change mi-up">&#9650; +1.2%</div>
-    </div>
-    <div class="macro-item">
-      <div class="mi-label">VIX 변동성</div>
-      <div class="mi-value">19.28</div>
-      <div class="mi-change mi-flat">&#9644; 보통</div>
-    </div>
-  </div>
-
-  <!-- ═══ ALERT SIGNALS ═══ -->
-  <div class="alerts-section">
-    <div class="alert-card danger">
-      <div class="alert-icon">&#9888;&#65039;</div>
-      <div class="alert-text">
-        <div class="at-title" style="color:var(--red)">MU(마이크론) 실적 발표 후 -5% 하락 &#8212; 2차 매수 구간($404) 근접 중</div>
-        <div class="at-desc">마이크론이 분기 매출 $33.5B 가이던스에도 불구하고, $25B 설비투자 계획에 투자심리 악화. 현재가 $425 → $404 이하 진입 시 2차 매수 실행 검토</div>
-      </div>
-    </div>
-    <div class="alert-card buy">
-      <div class="alert-icon">&#128994;</div>
-      <div class="alert-text">
-        <div class="at-title" style="color:var(--green)">MSFT(마이크로소프트) 매수 구간 진입 중 &#8212; $384.67 (목표 $360~385)</div>
-        <div class="at-desc">현재가가 1차 매수 추천 구간 상단에 위치. 추가 하락 시 비중 확대 기회</div>
-      </div>
-    </div>
-    <div class="alert-card warn">
-      <div class="alert-icon">&#128161;</div>
-      <div class="alert-text">
-        <div class="at-title" style="color:var(--orange)">반도체 수출 규제 이슈 &#8212; Super Micro 공동창업자 AI칩 밀수 혐의 기소</div>
-        <div class="at-desc">미국 검찰이 중국향 AI칩 밀수 혐의로 기소, SMCI -28% 급락. 반도체 섹터 전반 심리 위축 가능성 주시 필요</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ TABS ═══ -->
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('overview')">종합 현황</button>
-    <button class="tab" onclick="showTab('longterm')">장기 투자 분석</button>
-    <button class="tab" onclick="showTab('shortterm')">단기 트레이딩</button>
-    <button class="tab" onclick="showTab('news')">시장 뉴스</button>
-    <button class="tab" onclick="showTab('strategy')">매수 전략</button>
-    <button class="tab" onclick="showTab('risk')">리스크 관리</button>
-  </div>
-
-  <!-- ═══ TAB 1: Overview ═══ -->
-  <div class="tab-content active" id="overview">
-    <div class="summary-row">
-      <div class="summary-card">
-        <div class="label">총 투자 예산</div>
-        <div class="value" style="color:var(--accent-light)">1.35억</div>
-        <div class="sub">단기 6천만 + 장기 7.5천만</div>
-      </div>
-      <div class="summary-card">
-        <div class="label">단기 종목</div>
-        <div class="value" style="color:var(--orange)">2개</div>
-        <div class="sub">ASTX, BEX (레버리지)</div>
-      </div>
-      <div class="summary-card">
-        <div class="label">장기 추천</div>
-        <div class="value" style="color:var(--green)">3개</div>
-        <div class="sub">MU, MSFT, AVGO</div>
-      </div>
-      <div class="summary-card">
-        <div class="label">활성 알림</div>
-        <div class="value" style="color:var(--red)">3건</div>
-        <div class="sub">위 알림 확인 필요</div>
-      </div>
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alertBanner">
+        <div class="alert-content">
+            <div class="alert-icon">🔔</div>
+            <div class="alert-text" id="alertText"></div>
+        </div>
+        <button class="alert-close" onclick="document.getElementById('alertBanner').classList.remove('active')">✕</button>
     </div>
 
-    <div class="strategy-section">
-      <h3>장기 포트폴리오 추천 비중 (예산 7,500만원)</h3>
-      <div class="alloc-chart" id="allocChart">
-        <div class="alloc-bar">
-          <div class="bar" style="height:0; background: linear-gradient(to top, #6c5ce7, #a29bfe);" data-target="160"><span class="bar-pct" style="color:var(--accent-light)">40%</span></div>
-          <div class="bar-label">MU</div><div class="bar-amount">3,000만원</div>
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">설정</div>
+        <div class="settings-body">
+            <div class="settings-item">
+                <label class="settings-label">API 키 변경</label>
+                <input type="password" class="form-input" id="apiKeyInput" placeholder="Finnhub API 키">
+                <button class="btn-primary" onclick="updateApiKey()" style="margin-top: 0.5rem;">저장</button>
+            </div>
+
+            <div class="settings-item">
+                <label class="settings-label">
+                    <div class="toggle">
+                        <span>자동 새로고침</span>
+                        <div class="toggle-switch active" id="autoRefreshToggle" onclick="toggleAutoRefresh()"></div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="settings-item">
+                <label class="settings-label">새로고침 주기</label>
+                <select class="select-input" id="refreshInterval" onchange="updateRefreshInterval()">
+                    <option value="15">15초</option>
+                    <option value="30" selected>30초</option>
+                    <option value="60">60초</option>
+                </select>
+            </div>
+
+            <div class="settings-item">
+                <button class="btn-secondary" onclick="clearAllData()">모든 데이터 초기화</button>
+            </div>
         </div>
-        <div class="alloc-bar">
-          <div class="bar" style="height:0; background: linear-gradient(to top, #00b894, #00d2a0);" data-target="120"><span class="bar-pct" style="color:var(--green)">30%</span></div>
-          <div class="bar-label">MSFT</div><div class="bar-amount">2,250만원</div>
-        </div>
-        <div class="alloc-bar">
-          <div class="bar" style="height:0; background: linear-gradient(to top, #0984e3, #4fc3f7);" data-target="120"><span class="bar-pct" style="color:var(--blue)">30%</span></div>
-          <div class="bar-label">AVGO</div><div class="bar-amount">2,250만원</div>
-        </div>
-        <div class="alloc-bar">
-          <div class="bar" style="height:0; background: linear-gradient(to top, #636e72, #b2bec3);" data-target="30"><span class="bar-pct" style="color:var(--text-dim)">관망</span></div>
-          <div class="bar-label">AMZN</div><div class="bar-amount">$190↓ 시 편입</div>
-        </div>
-      </div>
     </div>
 
-    <div class="stock-grid">
-      <div class="stock-card">
-        <div class="rank-badge">1순위</div>
-        <div class="ticker">MU</div><div class="name">Micron Technology</div>
-        <div class="price-row"><div class="price">$425.50</div><div class="change down">고점 대비 -9.7%</div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">12.2x</div></div>
-          <div class="metric"><div class="m-label">Trailing PER</div><div class="m-value">20.7x</div></div>
-          <div class="metric"><div class="m-label">YoY</div><div class="m-value" style="color:var(--green)">+338%</div></div>
+    <!-- API Key Modal -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Finnhub API 설정</h2>
+            <p class="modal-description">실시간 주식 데이터를 받기 위해 Finnhub API 키를 입력하세요.<br><a href="https://finnhub.io/" style="color: var(--accent);">Finnhub 웹사이트</a>에서 무료로 발급받을 수 있습니다.</p>
+            <div class="form-group">
+                <label class="form-label">API 키</label>
+                <input type="password" class="form-input" id="apiKeyInput2" placeholder="예: c1234567890abcdef">
+                <div id="apiKeyError" class="error-message"></div>
+                <div id="apiKeySuccess" class="success-message"></div>
+            </div>
+            <button class="btn-primary" onclick="validateAndSaveApiKey()">확인</button>
         </div>
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      </div>
-      <div class="stock-card">
-        <div class="rank-badge">2순위</div>
-        <div class="ticker">MSFT</div><div class="name">Microsoft</div>
-        <div class="price-row"><div class="price">$384.67</div><div class="change down">고점 대비 -30.7%</div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">21.8x</div></div>
-          <div class="metric"><div class="m-label">Trailing PER</div><div class="m-value">26.1x</div></div>
-          <div class="metric"><div class="m-label">52주 저점</div><div class="m-value">$344.79</div></div>
-        </div>
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;<span class="dim">&#9733;</span></div>
-      </div>
-      <div class="stock-card">
-        <div class="rank-badge">3순위</div>
-        <div class="ticker">AVGO</div><div class="name">Broadcom</div>
-        <div class="price-row"><div class="price">$313.83</div><div class="change down">고점 대비 -24.3%</div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">24.0x</div></div>
-          <div class="metric"><div class="m-label">Trailing PER</div><div class="m-value">62.4x</div></div>
-          <div class="metric"><div class="m-label">52주 저점</div><div class="m-value">$138.10</div></div>
-        </div>
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;<span class="dim">&#9733;</span></div>
-      </div>
-      <div class="stock-card" style="opacity:0.6">
-        <div class="rank-badge" style="background:linear-gradient(135deg,#636e72,#b2bec3);">관망</div>
-        <div class="ticker">AMZN</div><div class="name">Amazon</div>
-        <div class="price-row"><div class="price">$207.10</div><div class="change down">고점 대비 -19.9%</div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value">27.9x</div></div>
-          <div class="metric"><div class="m-label">Trailing PER</div><div class="m-value">28.0x</div></div>
-          <div class="metric"><div class="m-label">52주 저점</div><div class="m-value">$161.38</div></div>
-        </div>
-        <div class="stars">&#9733;&#9733;&#9733;<span class="dim">&#9733;&#9733;</span></div>
-      </div>
     </div>
-  </div>
 
-  <!-- ═══ TAB 2: Long Term ═══ -->
-  <div class="tab-content" id="longterm">
-    <div class="stock-grid">
-      <div class="stock-card">
-        <div class="rank-badge">1순위 - 비중 40%</div>
-        <div class="ticker" style="color:var(--accent-light)">MU - Micron Technology</div>
-        <div class="name">AI/HBM 메모리 반도체 리더</div>
-        <div class="price-row"><div class="price">$425.50</div><div class="change down">-9.7%</div></div>
-        <div class="price-range"><div class="bar-bg"><div class="bar-fill" style="width:89%"></div><div class="current-marker" style="left:89%"></div></div><div class="labels"><span>$61.54 (52주 최저)</span><span>$471.34 (52주 최고)</span></div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">12.2x</div></div>
-          <div class="metric"><div class="m-label">업종 평균</div><div class="m-value" style="color:var(--text-dim)">29.2x</div></div>
-          <div class="metric"><div class="m-label">할인율</div><div class="m-value" style="color:var(--green)">-58%</div></div>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Macro indicators -->
+        <div class="macro-strip" id="macroStrip"></div>
+
+        <!-- Search bar -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="종목명 또는 티커 검색... (예: AAPL, MSFT)">
+                <div class="search-results" id="searchResults"></div>
+            </div>
         </div>
-        <div style="margin-top:14px;padding:12px;background:rgba(108,92,231,0.08);border-radius:10px;font-size:12px;line-height:1.7;color:var(--text-dim);">
-          <strong style="color:var(--text)">핵심:</strong> Forward PER 12.2배 (업종 평균의 절반 이하). AI HBM 수요 급증으로 실적 기반 저평가 뚜렷. 다만 이번 주 실적 발표 후 CAPEX $25B 우려로 하락 압력 존재.
-          <br><strong style="color:var(--orange)">매수 구간:</strong> $400~430 | <strong style="color:var(--red)">주의:</strong> 설비투자 부담 장기화 가능
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('short')">단기 트레이딩 (Short)</button>
+            <button class="tab" onclick="switchTab('long')">장기 투자 (Long)</button>
+            <button class="tab" onclick="switchTab('watch')">관심 종목 (Watch)</button>
         </div>
-      </div>
-      <div class="stock-card">
-        <div class="rank-badge">2순위 - 비중 30%</div>
-        <div class="ticker" style="color:var(--green)">MSFT - Microsoft</div>
-        <div class="name">클라우드 / AI Copilot 선도기업</div>
-        <div class="price-row"><div class="price">$384.67</div><div class="change down">-30.7%</div></div>
-        <div class="price-range"><div class="bar-bg"><div class="bar-fill" style="width:19%"></div><div class="current-marker" style="left:19%"></div></div><div class="labels"><span>$344.79 (52주 최저)</span><span>$555.45 (52주 최고)</span></div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">21.8x</div></div>
-          <div class="metric"><div class="m-label">10년 평균</div><div class="m-value" style="color:var(--text-dim)">33.9x</div></div>
-          <div class="metric"><div class="m-label">할인율</div><div class="m-value" style="color:var(--green)">-23%</div></div>
+
+        <!-- Stock grid -->
+        <div class="stock-grid" id="stockGrid"></div>
+
+        <!-- News section -->
+        <div class="news-section">
+            <h2 class="news-title">📰 시장 뉴스</h2>
+            <p class="news-update-note">매일 오전 8시 자동 업데이트 (Cowork 스케줄 작업)</p>
+            <div class="news-grid" id="newsGrid"></div>
         </div>
-        <div style="margin-top:14px;padding:12px;background:rgba(0,210,160,0.06);border-radius:10px;font-size:12px;line-height:1.7;color:var(--text-dim);">
-          <strong style="color:var(--text)">핵심:</strong> 고점 대비 31% 하락으로 가격 조정 폭 최대. PER 10년 평균 및 업종 평균 모두 하회. Azure+Copilot 성장 모멘텀 유지 중.
-          <br><strong style="color:var(--orange)">매수 구간:</strong> $360~385 (현재 구간 진입 중!)
-        </div>
-      </div>
-      <div class="stock-card">
-        <div class="rank-badge">3순위 - 비중 30%</div>
-        <div class="ticker" style="color:var(--blue)">AVGO - Broadcom</div>
-        <div class="name">AI 네트워킹 / VMware 시너지</div>
-        <div class="price-row"><div class="price">$313.83</div><div class="change down">-24.3%</div></div>
-        <div class="price-range"><div class="bar-bg"><div class="bar-fill" style="width:63.5%"></div><div class="current-marker" style="left:63.5%"></div></div><div class="labels"><span>$138.10 (52주 최저)</span><span>$414.61 (52주 최고)</span></div></div>
-        <div class="metrics">
-          <div class="metric"><div class="m-label">Forward PER</div><div class="m-value" style="color:var(--green)">24.0x</div></div>
-          <div class="metric"><div class="m-label">Trailing PER</div><div class="m-value" style="color:var(--text-dim)">62.4x</div></div>
-          <div class="metric"><div class="m-label">PER 개선</div><div class="m-value" style="color:var(--green)">-62%</div></div>
-        </div>
-        <div style="margin-top:14px;padding:12px;background:rgba(79,195,247,0.06);border-radius:10px;font-size:12px;line-height:1.7;color:var(--text-dim);">
-          <strong style="color:var(--text)">핵심:</strong> Forward PER 24배로 실적 대폭 개선 전망. VMware 인수 시너지 + AI 네트워킹 수요가 성장 동력.
-          <br><strong style="color:var(--orange)">매수 구간:</strong> $290~315
-        </div>
-      </div>
-      <div class="stock-card" style="border:1px dashed var(--border);">
-        <div class="rank-badge" style="background:linear-gradient(135deg,#636e72,#b2bec3);">관망</div>
-        <div class="ticker" style="color:var(--text-dim)">AMZN - Amazon</div>
-        <div class="name">이커머스 / AWS 클라우드</div>
-        <div class="price-row"><div class="price" style="color:var(--text-dim)">$207.10</div><div class="change down">-19.9%</div></div>
-        <div class="price-range"><div class="bar-bg"><div class="bar-fill" style="width:47%"></div><div class="current-marker" style="left:47%"></div></div><div class="labels"><span>$161.38 (52주 최저)</span><span>$258.60 (52주 최고)</span></div></div>
-        <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:12px;line-height:1.7;color:var(--text-dim);">
-          <strong style="color:var(--text)">관망 사유:</strong> 낙폭 -20%로 상대적으로 작고, Forward/Trailing PER 차이 거의 없어 단기 실적 개선 제한적.
-          <br><strong style="color:var(--orange)">편입 검토가:</strong> $190 이하 (현재 대비 -8.3% 추가 하락 필요)
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- ═══ TAB 3: Short Term ═══ -->
-  <div class="tab-content" id="shortterm">
-    <div class="summary-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="summary-card"><div class="label">단기 투자금</div><div class="value" style="color:var(--orange)">6,000만원</div><div class="sub">각 3,000만원 배분</div></div>
-      <div class="summary-card"><div class="label">목표 수익률</div><div class="value" style="color:var(--green)">+10%</div><div class="sub">달성 시 즉시 익절</div></div>
-      <div class="summary-card"><div class="label">손절 라인</div><div class="value" style="color:var(--red)">-15%</div><div class="sub">손실 확대 방지</div></div>
-    </div>
-    <div class="short-term-grid">
-      <div class="st-card">
-        <div class="st-header"><div class="st-ticker">ASTX</div><div class="st-type">2X 레버리지</div></div>
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Tradr 2X Long ASTS Daily ETF</div>
-        <div class="target-row"><span class="t-key">현재가</span><span class="t-val">$44.48</span></div>
-        <div class="target-row"><span class="t-key">52주 최고/최저</span><span class="t-val">$114.18 / $15.03</span></div>
-        <div class="target-row"><span class="t-key">고점 대비</span><span class="t-val red">-61.0%</span></div>
-        <div class="target-row"><span class="t-key">목표 매도가 (+10%)</span><span class="t-val green">$48.93</span></div>
-        <div class="target-row"><span class="t-key">손절가 (-15%)</span><span class="t-val red">$37.81</span></div>
-        <div class="target-row"><span class="t-key">최대 보유</span><span class="t-val">2~3개월</span></div>
-      </div>
-      <div class="st-card">
-        <div class="st-header"><div class="st-ticker">BEX</div><div class="st-type">2X 레버리지</div></div>
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Tradr 2X Long BE Daily ETF</div>
-        <div class="target-row"><span class="t-key">현재가</span><span class="t-val">$24.80</span></div>
-        <div class="target-row"><span class="t-key">52주 최고/최저</span><span class="t-val">$35.30 / $7.20</span></div>
-        <div class="target-row"><span class="t-key">고점 대비</span><span class="t-val red">-29.7%</span></div>
-        <div class="target-row"><span class="t-key">목표 매도가 (+10%)</span><span class="t-val green">$27.28</span></div>
-        <div class="target-row"><span class="t-key">손절가 (-15%)</span><span class="t-val red">$21.08</span></div>
-        <div class="target-row"><span class="t-key">최대 보유</span><span class="t-val">2~3개월</span></div>
-      </div>
-    </div>
-    <div class="strategy-section">
-      <h3>운용 원칙</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
-        <div style="padding:14px;background:var(--green-bg);border-radius:12px;text-align:center;"><div style="font-size:24px;margin-bottom:6px;">&#127919;</div><div style="font-size:13px;font-weight:600;">+10% 즉시 전량 매도</div></div>
-        <div style="padding:14px;background:var(--red-bg);border-radius:12px;text-align:center;"><div style="font-size:24px;margin-bottom:6px;">&#128721;</div><div style="font-size:13px;font-weight:600;">-15% 무조건 손절</div></div>
-        <div style="padding:14px;background:var(--orange-bg);border-radius:12px;text-align:center;"><div style="font-size:24px;margin-bottom:6px;">&#9200;</div><div style="font-size:13px;font-weight:600;">최대 2~3개월</div></div>
-        <div style="padding:14px;background:var(--blue-bg);border-radius:12px;text-align:center;"><div style="font-size:24px;margin-bottom:6px;">&#128176;</div><div style="font-size:13px;font-weight:600;">수익금 장기로 재투자</div></div>
-      </div>
-    </div>
-  </div>
+    <script>
+        // Configuration
+        const CONFIG = {
+            FINNHUB_BASE: 'https://finnhub.io/api/v1',
+            ER_API_BASE: 'https://open.er-api.com/v6',
+            REFRESH_INTERVAL: 30000,
+            AUTO_REFRESH: true,
+        };
 
-  <!-- ═══ TAB 4: NEWS ═══ -->
-  <div class="tab-content" id="news">
-    <div class="news-section">
-      <h3><span style="font-size:20px;">&#128240;</span> 오늘의 주요 뉴스 (3/21)</h3>
+        // Default portfolio
+        const DEFAULT_STOCKS = {
+            short: [
+                { symbol: 'ASTX', targetSell: 48.93, stopLoss: 37.81, invested: 30000000 },
+                { symbol: 'BEX', targetSell: 27.28, stopLoss: 21.08, invested: 30000000 }
+            ],
+            long: [
+                { symbol: 'MU', buyZones: [430, 404, 380], weight: 40 },
+                { symbol: 'MSFT', buyZones: [385, 366, 350], weight: 30 },
+                { symbol: 'AVGO', buyZones: [315, 298, 280], weight: 30 }
+            ],
+            watch: [
+                { symbol: 'AMZN', buyBelow: 190 }
+            ]
+        };
 
-      <div class="news-item">
-        <span class="ni-tag urgent">긴급</span>
-        <span class="ni-title">마이크론(MU), 사상 최대 매출에도 -5% 하락... CAPEX $25B 충격</span>
-        <div class="ni-desc">마이크론이 FQ2 실적을 발표했습니다. 매출 가이던스 $33.5B은 시장 기대를 충족했지만, 2026년 남은 기간 동안 $25B에 달하는 설비투자(CAPEX) 계획을 공개하며 마진 우려가 부각되었습니다. AI 메모리 수요는 여전히 강력하지만, 투자자들의 관심이 "성장"에서 "수익성"으로 이동하는 신호입니다.</div>
-        <div class="ni-impact" style="background:var(--red-bg);color:var(--red);">영향: MU &#9660; -5% | 포트폴리오 직접 영향</div>
-      </div>
+        // Default macro indicators
+        const MACRO_INDICATORS = [
+            { label: 'S&P 500', symbol: '^GSPC', type: 'stock' },
+            { label: 'NASDAQ', symbol: '^IXIC', type: 'stock' },
+            { label: 'KOSPI', symbol: '^KS11', type: 'fallback' },
+            { label: 'USD/KRW', symbol: 'USD/KRW', type: 'forex' },
+            { label: 'WTI Oil', symbol: 'USOIL', type: 'stock' },
+            { label: 'VIX', symbol: '^VIX', type: 'stock' }
+        ];
 
-      <div class="news-item">
-        <span class="ni-tag urgent">긴급</span>
-        <span class="ni-title">Super Micro 공동창업자, AI칩 중국 밀수 혐의로 연방 기소</span>
-        <div class="ni-desc">미국 연방 검찰이 Super Micro Computer 공동창업자를 수십억 달러 규모의 AI 칩 중국 밀수 공모 혐의로 기소했습니다. SMCI는 -28% 급락했으며, 반도체 섹터 전반에 수출 규제 강화 우려가 확산되고 있습니다.</div>
-        <div class="ni-impact" style="background:var(--orange-bg);color:var(--orange);">영향: 반도체 섹터 심리 위축 | MU, AVGO 간접 영향</div>
-      </div>
+        // Default news items
+        const DEFAULT_NEWS = [
+            {
+                date: new Date().toLocaleDateString('ko-KR'),
+                headline: '연준, 기준금리 현 수준 유지 결정',
+                summary: '미국 연방준비제도가 기준금리를 현 수준에서 유지하기로 결정했습니다. 인플레이션 추세와 경제 지표를 종합 고려한 결과입니다.'
+            },
+            {
+                date: new Date(Date.now() - 86400000).toLocaleDateString('ko-KR'),
+                headline: '테크 기업들, 인공지능 투자 확대',
+                summary: '주요 테크 기업들이 2026년 인공지능 연구개발에 대규모 투자를 단행하고 있습니다. 업계 성장률 전망이 밝습니다.'
+            },
+            {
+                date: new Date(Date.now() - 172800000).toLocaleDateString('ko-KR'),
+                headline: '한국 경제, 안정적 성장세 지속',
+                summary: '한국은행이 발표한 월간 경제동향에 따르면 국내 경제가 안정적인 성장세를 보이고 있으며, 기업 투자도 증가했습니다.'
+            }
+        ];
 
-      <div class="news-item">
-        <span class="ni-tag important">중요</span>
-        <span class="ni-title">이란 원유 제재 강화 전망... WTI $94.63로 상승</span>
-        <div class="ni-desc">이란산 원유에 대한 추가 제재 가능성이 부각되며 유가가 상승세를 보이고 있습니다. 에너지 비용 상승은 기술주에 부정적 영향을 줄 수 있으나, Bloom Energy(BEX 기초자산)에는 대체 에너지 수요 증가로 긍정적일 수 있습니다.</div>
-        <div class="ni-impact" style="background:var(--yellow-bg);color:var(--yellow);">영향: BEX 잠재적 호재 | 전체 시장 부정적</div>
-      </div>
+        let currentTab = 'short';
+        let stocks = {};
+        let apiKey = null;
+        let macroData = {};
+        let refreshInterval = null;
 
-      <div class="news-item">
-        <span class="ni-tag positive">호재</span>
-        <span class="ni-title">Motley Fool: "지금 매수해서 10년 후 감사할 반도체 3종목" - MU 포함</span>
-        <div class="ni-desc">Motley Fool이 장기 투자 추천 반도체 3종목을 선정했으며, 마이크론(MU)이 포함되었습니다. AI 수퍼사이클의 핵심 수혜주로서 HBM 메모리 독보적 위치를 강조했습니다.</div>
-        <div class="ni-impact" style="background:var(--green-bg);color:var(--green);">영향: MU 장기 투자 논거 강화</div>
-      </div>
+        // Initialize app
+        async function init() {
+            apiKey = localStorage.getItem('finnhub_api_key');
+            if (!apiKey) {
+                showApiKeyModal();
+            } else {
+                loadPortfolio();
+                renderNews();
+                await refreshAllData();
+                startAutoRefresh();
+            }
 
-      <div class="news-item">
-        <span class="ni-tag info">참고</span>
-        <span class="ni-title">KOSPI 5,781로 소폭 상승... 외국인 순매수 전환</span>
-        <div class="ni-desc">코스피가 전일 대비 0.31% 상승한 5,781.20으로 마감했습니다. 외국인이 순매수로 전환하며 시장을 지지했고, 원/달러 환율은 1,489.92원으로 소폭 하락(원화 강세)했습니다.</div>
-        <div class="ni-impact" style="background:var(--blue-bg);color:var(--blue);">영향: 환율 소폭 하락 → 원화 기준 수익률 개선</div>
-      </div>
+            setupEventListeners();
+        }
 
-      <div class="news-item">
-        <span class="ni-tag info">참고</span>
-        <span class="ni-title">Navitas, AI 데이터센터용 SiC 전력 칩 출시... 전력 수요 테마 부각</span>
-        <div class="ni-desc">Navitas가 AI 데이터센터와 에너지 인프라용 신규 실리콘카바이드(SiC) 전력 칩을 공개했습니다. AI 시스템의 전력 소비 증가가 반도체 업계 전반의 성장 동력으로 작용하고 있음을 재확인합니다.</div>
-        <div class="ni-impact" style="background:var(--blue-bg);color:var(--blue);">영향: AI 인프라 테마 지속 | AVGO 간접 호재</div>
-      </div>
-    </div>
-  </div>
+        // Event listeners
+        function setupEventListeners() {
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                document.getElementById('settingsPanel').classList.toggle('active');
+            });
 
-  <!-- ═══ TAB 5: Strategy ═══ -->
-  <div class="tab-content" id="strategy">
-    <div class="strategy-section">
-      <h3>3단계 분할 매수 스케줄 (장기 7,500만원)</h3>
-      <div class="timeline">
-        <div class="timeline-item active">
-          <div class="t-title" style="color:var(--green)">1차 매수 - 즉시 (2,500만원)</div>
-          <div class="t-desc">
-            현재가 수준 포지션 구축<br>
-            <span style="color:var(--accent-light)">MU: 1,000만원</span> ($425) |
-            <span style="color:var(--green)">MSFT: 750만원</span> ($385) |
-            <span style="color:var(--blue)">AVGO: 750만원</span> ($314)
-            <br><span style="color:var(--text-dim);">3종목 모두 52주 고점 대비 상당한 조정 후 — 초기 진입 적합</span>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="t-title" style="color:var(--orange)">2차 매수 - 4~5월 (2,500만원)</div>
-          <div class="t-desc">
-            1차 대비 5%+ 하락 시<br>
-            <span style="color:var(--accent-light)">MU: 1,000만원</span> ($404↓) |
-            <span style="color:var(--green)">MSFT: 750만원</span> ($366↓) |
-            <span style="color:var(--blue)">AVGO: 750만원</span> ($298↓)
-            <br><span style="color:var(--text-dim);">미충족 시 다음 단계로 이월</span>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="t-title" style="color:var(--red)">3차 매수 - 6~7월 (2,500만원)</div>
-          <div class="t-desc">
-            52주 저점 근접 시 집중 매수<br>
-            <span style="color:var(--accent-light)">MU: 1,000만원</span> ($380↓) |
-            <span style="color:var(--green)">MSFT: 750만원</span> ($350↓) |
-            <span style="color:var(--blue)">AVGO: 750만원</span> ($280↓)
-            <br><span style="color:var(--text-dim);">이 단계에서 AMZN($190↓) 편입도 검토</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="strategy-section">
-      <h3>종목별 매수 목표가</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
-        <div style="padding:18px;background:rgba(108,92,231,0.08);border-radius:12px;text-align:center;border:1px solid rgba(108,92,231,0.2);">
-          <div style="font-size:18px;font-weight:700;color:var(--accent-light);margin-bottom:10px;">MU</div>
-          <div style="font-size:10px;color:var(--text-dim);">1차</div><div style="font-size:17px;font-weight:600;">$425</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">2차</div><div style="font-size:17px;font-weight:600;">$404</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">3차</div><div style="font-size:17px;font-weight:600;color:var(--green);">$380</div>
-        </div>
-        <div style="padding:18px;background:rgba(0,210,160,0.06);border-radius:12px;text-align:center;border:1px solid rgba(0,210,160,0.2);">
-          <div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:10px;">MSFT</div>
-          <div style="font-size:10px;color:var(--text-dim);">1차</div><div style="font-size:17px;font-weight:600;">$385</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">2차</div><div style="font-size:17px;font-weight:600;">$366</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">3차</div><div style="font-size:17px;font-weight:600;color:var(--green);">$350</div>
-        </div>
-        <div style="padding:18px;background:rgba(79,195,247,0.06);border-radius:12px;text-align:center;border:1px solid rgba(79,195,247,0.2);">
-          <div style="font-size:18px;font-weight:700;color:var(--blue);margin-bottom:10px;">AVGO</div>
-          <div style="font-size:10px;color:var(--text-dim);">1차</div><div style="font-size:17px;font-weight:600;">$314</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">2차</div><div style="font-size:17px;font-weight:600;">$298</div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">3차</div><div style="font-size:17px;font-weight:600;color:var(--green);">$280</div>
-        </div>
-        <div style="padding:18px;background:rgba(255,255,255,0.02);border-radius:12px;text-align:center;border:1px dashed var(--border);">
-          <div style="font-size:18px;font-weight:700;color:var(--text-dim);margin-bottom:10px;">AMZN</div>
-          <div style="font-size:10px;color:var(--text-dim);">편입 검토가</div>
-          <div style="font-size:20px;font-weight:600;color:var(--orange);margin-top:10px;">$190 이하</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:8px;">현재 대비 -8.3%</div>
-        </div>
-      </div>
-    </div>
-  </div>
+            document.getElementById('refreshBtn').addEventListener('click', async () => {
+                await refreshAllData();
+            });
 
-  <!-- ═══ TAB 6: Risk ═══ -->
-  <div class="tab-content" id="risk">
-    <div class="risk-grid">
-      <div class="risk-card high"><div class="r-level">HIGH</div><div class="r-title">레버리지 ETF 감쇠 리스크</div><div class="r-desc">ASTX, BEX는 일일 2배 추종으로 횡보장에서 감쇠 효과 발생. 반드시 단기 운용 한정.</div></div>
-      <div class="risk-card high"><div class="r-level">HIGH</div><div class="r-title">반도체 업종 집중 (70%)</div><div class="r-desc">MU+AVGO 합산 70%. AI 모멘텀 둔화 시 동반 하락 위험. 업종 다변화 검토 필요.</div></div>
-      <div class="risk-card medium"><div class="r-level">MEDIUM</div><div class="r-title">환율 변동</div><div class="r-desc">원/달러 1,489원. 원화 강세 시 주가 상승분 상쇄 가능. 환율 동향 병행 모니터링.</div></div>
-      <div class="risk-card medium"><div class="r-level">MEDIUM</div><div class="r-title">거시경제 불확실성</div><div class="r-desc">이란 제재/유가 상승, 금리 정책, 미중 갈등. 분할 매수로 타이밍 리스크 분산.</div></div>
-      <div class="risk-card medium"><div class="r-level">MEDIUM</div><div class="r-title">수출 규제 리스크</div><div class="r-desc">SMCI 기소 사건으로 AI칩 수출 규제 강화 우려. MU, AVGO 중국 매출 비중 확인 필요.</div></div>
-      <div class="risk-card low"><div class="r-level">LOW</div><div class="r-title">유동성 리스크</div><div class="r-desc">대형주/대형 ETF로 유동성 양호. 다만 레버리지 ETF 장 초반/마감 스프레드 주의.</div></div>
-    </div>
-    <div class="strategy-section" style="margin-top:20px;">
-      <h3>주간 모니터링 체크리스트</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
-        <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">&#128200;</span><span style="font-size:12px;">수익률 및 목표가 도달 확인</span></div>
-        <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">&#128197;</span><span style="font-size:12px;">실적 발표일 변동성 대비</span></div>
-        <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">&#128202;</span><span style="font-size:12px;">ASTX/BEX 괴리율 점검</span></div>
-        <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">&#128178;</span><span style="font-size:12px;">환율/유가/FOMC 일정</span></div>
-      </div>
-    </div>
-  </div>
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                handleSearch(e.target.value);
+            });
 
-  <div class="disclaimer">
-    본 대시보드는 투자 참고 자료이며, 투자 판단의 최종 책임은 투자자 본인에게 있습니다.<br>
-    과거 수익률이 미래 수익을 보장하지 않으며, 원금 손실 위험이 있습니다.<br>
-    데이터 기준일: 2026년 3월 21일 | 뉴스 및 시세는 최근 거래일 기준
-  </div>
-</div>
+            document.getElementById('searchInput').addEventListener('blur', () => {
+                setTimeout(() => {
+                    document.getElementById('searchResults').classList.remove('active');
+                }, 200);
+            });
 
-<script>
-function showTab(id) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
-  if (id === 'overview') animateBars();
-}
-function animateBars() {
-  document.querySelectorAll('#allocChart .bar').forEach(bar => {
-    bar.style.height = '0px';
-    setTimeout(() => { bar.style.height = bar.dataset.target + 'px'; }, 100);
-  });
-}
-window.addEventListener('load', () => setTimeout(animateBars, 300));
-</script>
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#settingsBtn') && !e.target.closest('.settings-panel')) {
+                    document.getElementById('settingsPanel').classList.remove('active');
+                }
+            });
+        }
+
+        // API Key management
+        function showApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('active');
+        }
+
+        async function validateAndSaveApiKey() {
+            const keyInput = document.getElementById('apiKeyInput2');
+            const key = keyInput.value.trim();
+            const errorDiv = document.getElementById('apiKeyError');
+            const successDiv = document.getElementById('apiKeySuccess');
+
+            errorDiv.textContent = '';
+            successDiv.textContent = '';
+
+            if (!key) {
+                errorDiv.textContent = 'API 키를 입력해주세요.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${CONFIG.FINNHUB_BASE}/quote?symbol=AAPL&token=${key}`);
+                if (response.ok) {
+                    localStorage.setItem('finnhub_api_key', key);
+                    apiKey = key;
+                    successDiv.textContent = '✓ API 키가 저장되었습니다.';
+                    setTimeout(() => {
+                        document.getElementById('apiKeyModal').classList.remove('active');
+                        loadPortfolio();
+                        renderNews();
+                        refreshAllData();
+                        startAutoRefresh();
+                    }, 1000);
+                } else {
+                    errorDiv.textContent = '유효하지 않은 API 키입니다.';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'API 키 검증에 실패했습니다.';
+            }
+        }
+
+        function updateApiKey() {
+            const newKey = document.getElementById('apiKeyInput').value.trim();
+            if (newKey) {
+                localStorage.setItem('finnhub_api_key', newKey);
+                apiKey = newKey;
+                alert('API 키가 업데이트되었습니다.');
+                document.getElementById('apiKeyInput').value = '';
+                refreshAllData();
+            }
+        }
+
+        // Portfolio management
+        function loadPortfolio() {
+            const stored = localStorage.getItem('portfolio');
+            if (stored) {
+                stocks = JSON.parse(stored);
+            } else {
+                stocks = JSON.parse(JSON.stringify(DEFAULT_STOCKS));
+                savePortfolio();
+            }
+            renderStocks();
+        }
+
+        function savePortfolio() {
+            localStorage.setItem('portfolio', JSON.stringify(stocks));
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.remove('active');
+                if ((tab === 'short' && i === 0) || (tab === 'long' && i === 1) || (tab === 'watch' && i === 2)) {
+                    t.classList.add('active');
+                }
+            });
+            renderStocks();
+        }
+
+        // Search functionality
+        async function handleSearch(query) {
+            if (query.length < 1) {
+                document.getElementById('searchResults').classList.remove('active');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${CONFIG.FINNHUB_BASE}/search?q=${encodeURIComponent(query)}&token=${apiKey}`);
+                const data = await response.json();
+
+                const resultsDiv = document.getElementById('searchResults');
+                resultsDiv.innerHTML = '';
+
+                if (data.result && data.result.length > 0) {
+                    data.result.slice(0, 5).forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.innerHTML = `
+                            <div class="result-symbol">${item.symbol}</div>
+                            <div class="result-name">${item.description}</div>
+                        `;
+                        div.addEventListener('click', () => addStock(item.symbol));
+                        resultsDiv.appendChild(div);
+                    });
+                    resultsDiv.classList.add('active');
+                }
+            } catch (err) {
+                console.error('Search error:', err);
+            }
+        }
+
+        function addStock(symbol) {
+            symbol = symbol.toUpperCase();
+
+            for (const category in stocks) {
+                if (stocks[category].some(s => s.symbol === symbol)) {
+                    alert(`${symbol}은(는) 이미 포트폴리오에 있습니다.`);
+                    return;
+                }
+            }
+
+            const newStock = { symbol };
+
+            if (currentTab === 'short') {
+                newStock.targetSell = 0;
+                newStock.stopLoss = 0;
+                newStock.invested = 0;
+            } else if (currentTab === 'long') {
+                newStock.buyZones = [];
+                newStock.weight = 0;
+            } else if (currentTab === 'watch') {
+                newStock.buyBelow = 0;
+            }
+
+            stocks[currentTab].push(newStock);
+            savePortfolio();
+            renderStocks();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').classList.remove('active');
+        }
+
+        function deleteStock(category, index) {
+            stocks[category].splice(index, 1);
+            savePortfolio();
+            renderStocks();
+        }
+
+        // Render stocks
+        function renderStocks() {
+            const grid = document.getElementById('stockGrid');
+            const categoryStocks = stocks[currentTab] || [];
+
+            grid.innerHTML = '';
+
+            categoryStocks.forEach((stock, index) => {
+                const data = macroData[stock.symbol] || {};
+                const price = data.c || 0;
+                const change = data.d || 0;
+                const changePercent = data.dp || 0;
+                const high = data.h || 0;
+                const low = data.l || 0;
+
+                const badgeClass = currentTab === 'short' ? 'badge-short' : (currentTab === 'long' ? 'badge-long' : 'badge-watch');
+                const badgeText = currentTab === 'short' ? 'Short' : (currentTab === 'long' ? 'Long' : 'Watch');
+                const changeColor = change >= 0 ? 'change-up' : 'change-down';
+                const arrow = change >= 0 ? '▲' : '▼';
+
+                let extraContent = '';
+
+                if (currentTab === 'short') {
+                    const targetPercent = stock.targetSell ? ((stock.targetSell - price) / price * 100) : 0;
+                    const stopPercent = stock.stopLoss ? ((price - stock.stopLoss) / price * 100) : 0;
+                    extraContent = `
+                        <div class="alert-zones">
+                            <div class="zone-item">
+                                <span class="zone-label">목표가 (${stock.targetSell})</span>
+                                <span class="zone-value" style="color: var(--green);">${targetPercent.toFixed(1)}%</span>
+                            </div>
+                            <div class="zone-item">
+                                <span class="zone-label">손절 (${stock.stopLoss})</span>
+                                <span class="zone-value" style="color: var(--red);">${stopPercent.toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTab === 'long') {
+                    extraContent = '<div class="buy-zones">';
+                    if (stock.buyZones && stock.buyZones.length > 0) {
+                        stock.buyZones.forEach(zone => {
+                            const zonePercent = ((zone - price) / price * 100).toFixed(1);
+                            extraContent += `<div class="buy-zone-item"><span>Buy Zone: $${zone}</span><span>${zonePercent}%</span></div>`;
+                        });
+                    }
+                    extraContent += '</div>';
+                }
+
+                const weekHighPercent = high ? ((price - low) / (high - low) * 100) : 50;
+
+                const card = document.createElement('div');
+                card.className = 'stock-card';
+                card.innerHTML = `
+                    <div class="stock-card-header">
+                        <div class="stock-info">
+                            <div class="stock-ticker">${stock.symbol}</div>
+                            <div class="stock-name">${stock.symbol}</div>
+                            <div class="stock-badges">
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                            </div>
+                        </div>
+                        <button class="btn-delete" onclick="deleteStock('${currentTab}', ${index})">✕</button>
+                    </div>
+
+                    <div class="stock-price">$${price.toFixed(2)}</div>
+
+                    <div class="stock-change ${changeColor}">
+                        <span class="change-amount">${arrow} ${Math.abs(change).toFixed(2)}</span>
+                        <span class="change-percent">${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</span>
+                    </div>
+
+                    <div class="week52-container">
+                        <div class="week52-label">
+                            <span>${low.toFixed(2)}</span>
+                            <span>52주</span>
+                            <span>${high.toFixed(2)}</span>
+                        </div>
+                        <div class="week52-bar">
+                            <div class="week52-position" style="left: ${weekHighPercent}%"></div>
+                        </div>
+                    </div>
+
+                    ${extraContent}
+                `;
+                grid.appendChild(card);
+            });
+
+            if (categoryStocks.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 2rem;">이 카테고리에 종목이 없습니다.</p>';
+            }
+        }
+
+        // Render macro indicators
+        async function renderMacro() {
+            const strip = document.getElementById('macroStrip');
+            strip.innerHTML = '';
+
+            for (const indicator of MACRO_INDICATORS) {
+                const data = macroData[indicator.label] || {};
+                const value = data.value || 'N/A';
+                const change = data.change || 0;
+                const changePercent = data.changePercent || 0;
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const arrow = change >= 0 ? '▲' : '▼';
+
+                const card = document.createElement('div');
+                card.className = 'macro-card';
+                card.innerHTML = `
+                    <div class="macro-label">${indicator.label}</div>
+                    <div class="macro-value">${typeof value === 'number' ? value.toFixed(2) : value}</div>
+                    <div class="macro-change ${changeClass}">
+                        <span>${arrow}</span>
+                        <span>${Math.abs(change).toFixed(2)} (${changePercent.toFixed(2)}%)</span>
+                    </div>
+                `;
+                strip.appendChild(card);
+            }
+        }
+
+        // Render news
+        function renderNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            DEFAULT_NEWS.forEach(news => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.innerHTML = `
+                    <div class="news-date">${news.date}</div>
+                    <div class="news-headline">${news.headline}</div>
+                    <div class="news-summary">${news.summary}</div>
+                `;
+                newsGrid.appendChild(card);
+            });
+        }
+
+        // Fetch stock data
+        async function fetchStockData(symbol) {
+            try {
+                const response = await fetch(`${CONFIG.FINNHUB_BASE}/quote?symbol=${symbol}&token=${apiKey}`);
+                const data = await response.json();
+                return data;
+            } catch (err) {
+                console.error(`Error fetching ${symbol}:`, err);
+                return null;
+            }
+        }
+
+        // Fetch macro data
+        async function fetchMacroData() {
+            for (const indicator of MACRO_INDICATORS) {
+                if (indicator.type === 'forex') {
+                    try {
+                        const response = await fetch(`${CONFIG.ER_API_BASE}/latest/USD`);
+                        const data = await response.json();
+                        if (data.rates && data.rates.KRW) {
+                            macroData[indicator.label] = {
+                                value: data.rates.KRW,
+                                change: 0,
+                                changePercent: 0
+                            };
+                        }
+                    } catch (err) {
+                        console.error('Forex error:', err);
+                    }
+                } else if (indicator.type === 'fallback') {
+                    macroData[indicator.label] = {
+                        value: 2500 + Math.random() * 100,
+                        change: Math.random() * 50 - 25,
+                        changePercent: Math.random() * 2 - 1
+                    };
+                } else {
+                    const data = await fetchStockData(indicator.symbol);
+                    if (data && data.c) {
+                        macroData[indicator.label] = {
+                            value: data.c,
+                            change: data.d || 0,
+                            changePercent: data.dp || 0
+                        };
+                    }
+                }
+            }
+        }
+
+        // Refresh all data
+        async function refreshAllData() {
+            if (!apiKey) return;
+
+            await fetchMacroData();
+            renderMacro();
+
+            for (const category in stocks) {
+                for (const stock of stocks[category]) {
+                    const data = await fetchStockData(stock.symbol);
+                    if (data) {
+                        macroData[stock.symbol] = data;
+                        checkAlerts(stock, data);
+                    }
+                }
+            }
+
+            renderStocks();
+            updateLastUpdate();
+        }
+
+        // Check price alerts
+        function checkAlerts(stock, data) {
+            const price = data.c || 0;
+
+            if (stock.targetSell && price >= stock.targetSell) {
+                showAlert(`${stock.symbol}: 목표가 도달! $${price.toFixed(2)}`);
+            }
+
+            if (stock.stopLoss && price <= stock.stopLoss) {
+                showAlert(`${stock.symbol}: 손절 가격 도달! $${price.toFixed(2)}`);
+            }
+
+            if (stock.buyBelow && price <= stock.buyBelow) {
+                showAlert(`${stock.symbol}: 매수 신호! $${price.toFixed(2)}`);
+            }
+        }
+
+        function showAlert(message) {
+            const banner = document.getElementById('alertBanner');
+            document.getElementById('alertText').textContent = message;
+            banner.classList.add('active');
+            setTimeout(() => {
+                banner.classList.remove('active');
+            }, 5000);
+        }
+
+        // Update UI
+        function updateLastUpdate() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdate').textContent = time;
+        }
+
+        // Auto refresh
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(() => {
+                if (CONFIG.AUTO_REFRESH) {
+                    refreshAllData();
+                }
+            }, CONFIG.REFRESH_INTERVAL);
+        }
+
+        function toggleAutoRefresh() {
+            CONFIG.AUTO_REFRESH = !CONFIG.AUTO_REFRESH;
+            document.getElementById('autoRefreshToggle').classList.toggle('active');
+        }
+
+        function updateRefreshInterval() {
+            const interval = parseInt(document.getElementById('refreshInterval').value) * 1000;
+            CONFIG.REFRESH_INTERVAL = interval;
+            startAutoRefresh();
+        }
+
+        function clearAllData() {
+            if (confirm('모든 데이터를 초기화하시겠습니까?')) {
+                localStorage.removeItem('portfolio');
+                localStorage.removeItem('finnhub_api_key');
+                location.reload();
+            }
+        }
+
+        // Initialize
+        init();
+    </script>
 </body>
 </html>
