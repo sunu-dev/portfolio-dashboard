@@ -60,7 +60,8 @@ export async function fetchMacroData() {
 }
 
 export async function fetchKoreanNews(query) {
-    const url = `${CONFIG.RSS2JSON_BASE}?rss_url=${encodeURIComponent('https://news.google.com/rss/search?q=' + encodeURIComponent(query) + '&hl=ko&gl=KR&ceid=KR:ko')}&count=15`;
+    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`;
+    const url = `${CONFIG.RSS2JSON_BASE}?rss_url=${encodeURIComponent(rssUrl)}&count=15`;
     try {
         const r = await fetch(url);
         const d = await r.json();
