@@ -60,28 +60,77 @@ export async function fetchMacroData() {
 }
 
 export async function fetchKoreanNews(query) {
+    // Try rss2json first, fall back to direct RSS parsing via CORS proxy
     const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`;
-    const url = `${CONFIG.RSS2JSON_BASE}?rss_url=${encodeURIComponent(rssUrl)}&count=15`;
+
+    // Attempt 1: rss2json
     try {
-        const r = await fetch(url);
+        const r = await fetch(`${CONFIG.RSS2JSON_BASE}?rss_url=${encodeURIComponent(rssUrl)}`);
         const d = await r.json();
-        if (d.status === 'ok' && d.items) {
-            return d.items.map(i => ({
-                title: i.title || '',
-                link: i.link || '#',
-                pubDate: i.pubDate || '',
-                source: i.author || (i.title.match(/ - ([^-]+)$/) || [])[1] || '',
-                description: (() => {
-                    const div = document.createElement('div');
-                    div.innerHTML = i.description || i.content || '';
-                    return (div.textContent || '').substring(0, 150).trim();
-                })()
+        if (d.status === 'ok' && d.items?.length) {
+            return d.items.map(parseNewsItem);
+        }
+    } catch (e) { /* fall through */ }
+
+    // Attempt 2: Direct fetch + DOMParser (works on same-origin or CORS-allowed)
+    try {
+        const r = await fetch(rssUrl);
+        const text = await r.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, 'text/xml');
+        const items = xml.querySelectorAll('item');
+        if (items.length) {
+            return [...items].slice(0, 15).map(item => ({
+                title: item.querySelector('title')?.textContent || '',
+                link: item.querySelector('link')?.textContent || '#',
+                pubDate: item.querySelector('pubDate')?.textContent || '',
+                source: (item.querySelector('source')?.textContent) || extractSource(item.querySelector('title')?.textContent || ''),
+                description: ''
+            }));
+        }
+    } catch (e) { /* fall through */ }
+
+    // Attempt 3: allorigins CORS proxy
+    try {
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+        const r = await fetch(proxyUrl);
+        const text = await r.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, 'text/xml');
+        const items = xml.querySelectorAll('item');
+        if (items.length) {
+            return [...items].slice(0, 15).map(item => ({
+                title: item.querySelector('title')?.textContent || '',
+                link: item.querySelector('link')?.textContent || '#',
+                pubDate: item.querySelector('pubDate')?.textContent || '',
+                source: (item.querySelector('source')?.textContent) || extractSource(item.querySelector('title')?.textContent || ''),
+                description: ''
             }));
         }
     } catch (e) {
-        console.error(e);
+        console.error('News fetch failed:', e);
     }
+
     return null;
+}
+
+function parseNewsItem(i) {
+    return {
+        title: i.title || '',
+        link: i.link || '#',
+        pubDate: i.pubDate || '',
+        source: i.author || extractSource(i.title || ''),
+        description: (() => {
+            const div = document.createElement('div');
+            div.innerHTML = i.description || i.content || '';
+            return (div.textContent || '').substring(0, 150).trim();
+        })()
+    };
+}
+
+function extractSource(title) {
+    const match = title.match(/ - ([^-]+)$/);
+    return match ? match[1].trim() : '';
 }
 
 export async function refreshAllData() {
