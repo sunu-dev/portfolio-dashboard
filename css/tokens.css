@@ -1,0 +1,58 @@
+/* ===== SOLB PORTFOLIO — Toss Design Tokens ===== */
+:root {
+    /* Surface layers */
+    --bg: #F2F4F6;
+    --surface: #FFFFFF;
+    --surface-hover: #F7F8FA;
+    --surface-pressed: #F2F4F6;
+
+    /* Text */
+    --text-primary: #191F28;
+    --text-secondary: #4E5968;
+    --text-tertiary: #8B95A1;
+    --text-disabled: #B0B8C1;
+    --text-on-accent: #FFFFFF;
+
+    /* Accent */
+    --accent: #3182F6;
+    --accent-hover: #1B6AE0;
+    --accent-light: rgba(49,130,246,0.08);
+
+    /* Market direction — Korean convention: RED=up, BLUE=down */
+    --color-gain: #EF4452;
+    --color-gain-bg: rgba(239,68,82,0.06);
+    --color-loss: #3182F6;
+    --color-loss-bg: rgba(49,130,246,0.06);
+
+    /* Status */
+    --color-warning: #FF9500;
+    --color-warning-bg: rgba(255,149,0,0.06);
+    --color-success: #00C6BE;
+    --color-success-bg: rgba(0,198,190,0.06);
+
+    /* Border & Divider */
+    --border-light: rgba(0,0,0,0.06);
+    --border-medium: rgba(0,0,0,0.1);
+    --divider: #F2F4F6;
+
+    /* Shape */
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-pill: 100px;
+
+    /* Shadow — Toss subtle */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-overlay: 0 8px 28px rgba(0,0,0,0.12);
+
+    /* Typography */
+    --font-family: 'Pretendard Variable', 'Pretendard', -apple-system, 'Noto Sans KR', sans-serif;
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+    --tracking: -0.005em;
+}

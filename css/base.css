@@ -1,0 +1,22 @@
+/* ===== Reset & Base Typography ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    letter-spacing: var(--tracking);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a { color: var(--accent); text-decoration: none; }
+button { font-family: var(--font-family); letter-spacing: var(--tracking); }
+input, select, textarea { font-family: var(--font-family); letter-spacing: var(--tracking); }
+
+/* Semantic color utilities — Korean convention */
+.gain { color: var(--color-gain); }
+.loss { color: var(--color-loss); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }

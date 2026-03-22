@@ -1,0 +1,130 @@
+/* ===== Analysis Side Panel ===== */
+
+.analysis-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.3); z-index: 300; }
+.analysis-overlay.active { display: block; }
+
+.analysis-panel {
+    display: none;
+    position: fixed; top: 0; right: 0;
+    width: 520px; height: 100vh;
+    background: var(--bg);
+    box-shadow: var(--shadow-overlay);
+    z-index: 400;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.analysis-panel.active { display: block; animation: slideIn 0.25s ease-out; }
+
+.ap-header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface);
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.ap-header h3 { font-size: 16px; font-weight: var(--weight-semibold); }
+.ap-close { background: none; border: none; color: var(--text-tertiary); cursor: pointer; font-size: 20px; padding: 4px; border-radius: var(--radius-sm); }
+.ap-close:hover { background: var(--surface-hover); }
+.ap-body { padding: 20px; }
+.ap-section { margin-bottom: 24px; }
+.ap-section-title { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-tertiary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Price hero */
+.ap-price-hero { text-align: center; padding: 16px 0; }
+.ap-price { font-size: 32px; font-weight: var(--weight-bold); line-height: 38px; }
+.ap-price-change { font-size: 16px; font-weight: var(--weight-semibold); margin-top: 4px; }
+
+/* Signal summary */
+.ap-signal {
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+.ap-signal-title { font-size: 15px; font-weight: var(--weight-semibold); margin-bottom: 4px; }
+.ap-signal-body { font-size: 14px; font-weight: var(--weight-regular); }
+.signal-positive { background: var(--color-gain-bg); color: var(--color-gain); }
+.signal-caution { background: var(--color-loss-bg); color: var(--color-loss); }
+.signal-neutral { background: var(--surface-hover); color: var(--text-secondary); }
+
+/* Investment status */
+.ap-investment {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+.ap-investment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; }
+.ap-investment-label { font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; }
+.ap-investment-value { font-weight: var(--weight-semibold); }
+.ap-investment-result {
+    margin-top: 16px; padding: 12px;
+    border-radius: var(--radius-sm);
+    text-align: center; font-weight: var(--weight-bold);
+    font-size: 16px;
+}
+.ap-target-info { font-size: 12px; color: var(--text-tertiary); text-align: center; margin-top: 8px; }
+
+/* Signal indicator cards */
+.signal-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 14px; text-align: center;
+}
+.signal-card-label { font-size: 11px; color: var(--text-tertiary); font-weight: var(--weight-semibold); margin-bottom: 6px; }
+.signal-card-icon { font-size: 20px; margin-bottom: 4px; }
+.signal-card-value { font-size: 14px; font-weight: var(--weight-semibold); margin-bottom: 2px; }
+.signal-card-desc { font-size: 11px; color: var(--text-tertiary); }
+
+/* Chart */
+.chart-container { width: 100%; height: 280px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-light); }
+.chart-legend { display: flex; gap: 14px; margin-top: 8px; font-size: 11px; color: var(--text-tertiary); justify-content: center; }
+
+/* Pattern card */
+.pattern-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+}
+.pattern-name { font-weight: var(--weight-semibold); font-size: 14px; margin-bottom: 6px; }
+.pattern-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* Period returns grid */
+.period-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.period-item { text-align: center; padding: 8px 2px; background: var(--bg); border-radius: var(--radius-xs); }
+.period-label { font-size: 10px; color: var(--text-tertiary); display: block; margin-bottom: 2px; }
+.period-value { font-size: 12px; font-weight: var(--weight-semibold); }
+
+/* 52-week bar */
+.week52 { margin: 12px 0; }
+.week52-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-tertiary); margin-bottom: 6px; }
+.week52-bar { height: 4px; background: var(--divider); border-radius: 2px; position: relative; }
+.week52-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; position: absolute; top: -3px; border: 2px solid var(--surface); }
+
+/* Buy zones */
+.zone-item { display: flex; justify-content: space-between; padding: 10px 14px; background: var(--bg); border-radius: var(--radius-xs); margin-top: 6px; font-size: 14px; }
+.buy-zone-item { display: flex; justify-content: space-between; padding: 8px 0 8px 12px; font-size: 14px; border-left: 2px solid var(--color-success); margin-top: 6px; }
+
+/* Analysis news */
+.ap-news-item {
+    padding: 12px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1px solid var(--divider);
+}
+.ap-news-item:hover { background: var(--surface-hover); margin: 0 -8px; padding: 12px 8px; border-radius: var(--radius-xs); }
+.ap-news-title { font-weight: var(--weight-medium); font-size: 14px; line-height: 1.4; margin-bottom: 4px; color: var(--text-primary); }
+.ap-news-meta { font-size: 12px; color: var(--text-tertiary); display: flex; justify-content: space-between; }
+
+/* Disclaimer */
+.disclaimer { font-size: 12px; color: var(--text-disabled); padding: 16px; background: var(--bg); border-radius: var(--radius-sm); line-height: 1.6; margin-top: 8px; }
+
+@media (max-width: 768px) {
+    .analysis-panel { width: 100%; }
+    .signal-cards { gap: 6px; }
+    .signal-card { padding: 10px; }
+    .period-grid { grid-template-columns: repeat(5, 1fr); }
+}
